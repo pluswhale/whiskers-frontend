@@ -78,7 +78,7 @@ export const BuyTokenRow: FC<BuyRow> = (row): ReactElement => {
                 </div>
                 <div className={styles.buy_row__whisks}>
                     <Typography fontSize={isMobile ? '16px' : '28px'} fontFamily="Montserrat, sans-serif">
-                        {countWhisk}K
+                        {BigInt(countWhisk).toLocaleString()}
                     </Typography>
                     <Typography fontSize={isMobile ? '16px' : '26px'} fontFamily="Montserrat, sans-serif">
                         WHISK
