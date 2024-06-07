@@ -17,7 +17,7 @@ import { Flip, toast } from 'react-toastify';
 export const BuyTemplate: FC = (): ReactElement => {
     const navigate = useNavigate();
     const isMobile = useMediaQuery({ query: '(max-width: 600px)' });
-    const { userData, updateUnclaimedWhisks } = useAppContext();
+    const { userData, updateUnclaimedWhisks, jettonBalance } = useAppContext();
 
     const onNavigateToMainScreen = () => {
         navigate(-1);
@@ -96,7 +96,7 @@ export const BuyTemplate: FC = (): ReactElement => {
                             Wallet balance
                         </Typography>
                         <Typography fontSize={'16px'} fontFamily="Montserrat, sans-serif">
-                            1.345.584 WHISK
+                            {jettonBalance} WHISK
                         </Typography>
                     </div>
                 </div>

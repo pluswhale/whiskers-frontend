@@ -6,6 +6,11 @@ import { removeAllCookies } from '../../shared/libs/cookies';
 import { parseUriParamsLine } from '../../shared/utils/parseUriParams';
 import { WHEEL_SPINNING_SECONDS } from '../../shared/libs/constants';
 
+import { TonClient, Address, JettonMaster, fromNano } from "@ton/ton";
+import { JettonWallet } from '../../contracts/JettonWallet';
+import { getHttpEndpoint } from "@orbs-network/ton-access";
+import { NETWORK, JETTON_MINTER_ADDRESS } from '../../contracts/config';
+
 //@ts-ignore
 const tg: any = window?.Telegram?.WebApp;
 
@@ -46,26 +51,11 @@ interface AppContextType {
     updateUnclaimedWhisks: () => void;
     updateBonusSpins: (countSpins?: number) => void;
     updateTempWinScore: (score: number) => void;
+    jettonBalance: number;
 }
 
 // Create the context
 const AppContext = createContext<AppContextType | undefined>(undefined);
-
-// const FAKE_USER = {
-//     _id: '664df59323d74ce23ab961f5',
-//     userId: '574813379',
-//     unclaimedTokens: 60,
-//     countSpins: 3,
-//     spinsAvailable: 2,
-//     bonusSpins: 0,
-//     referralCode: '6910180d-d5b0-4093-a4b0-268a999c4ac2',
-//     referredBy: null,
-//     referredUsers: [],
-//     lastSpinTime: ['2024-05-21T19:02:04.007+00:00', '2024-05-22T04:24:11.639+00:00', '2024-05-22T10:17:34.732+00:00'],
-//     createdAt: '2024-05-21T11:33:49.389+00:00',
-//     updatedAt: '2024-05-22T10:17:34.733+00:00',
-//     __v: 5,
-// } as any;
 
 // Custom hook to use the context
 export const useAppContext = () => {
@@ -85,6 +75,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
     const [isAvailableToSpin, setIsAvailableToSpin] = useState<boolean>(false);
     const [isAppLoaded, setIsAppLoaded] = useState<boolean>(false);
     const uriParams = parseUriParamsLine(window.location.href?.split('?')?.[1]);
+    const [jettonBalance, setJettonBalance] = useState<number>(0);
 
     useEffect(() => {
         return () => {
@@ -108,8 +99,9 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const res = await loginUser(tgUser?.id?.toString() || '849293092'); //574813379
+                const res = await loginUser(tgUser?.id?.toString() || '1559803968'); //574813379
                 if (res) {
+                    console.log('res: ', res);
                     setUserData(res.user);
                     if (uriParams?.tgWebAppStartParam) {
                         await referralUser(res.user.userId, {
@@ -117,6 +109,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
                         });
                     }
                 }
+                console.log('userData: ', userData);
             } catch (error) {
                 console.error('Error during login:', error);
             }
@@ -144,6 +137,27 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
             setIsLoading(false);
         }, 4000);
     }, [userData?.spinsAvailable, userData?.bonusSpins]);
+
+    // fetch WHISK balance
+    useEffect(() => {
+        const fetchBalance = async () => {
+            const endpoint = await getHttpEndpoint({ network: NETWORK });
+            const client = new TonClient({ endpoint });
+            const minter = new JettonMaster(Address.parse(JETTON_MINTER_ADDRESS));
+            const minterContract = client.open(minter);
+
+            if (userData?.userTonAddress) {
+                const jettonWalletAddress = await minterContract.getWalletAddress(Address.parse(userData?.userTonAddress));
+                const userJettonWallet = new JettonWallet(jettonWalletAddress);
+                const userJettonWalletContract = client.open(userJettonWallet);
+                const whiskBalance = await userJettonWalletContract.getJettonBalance();
+                setJettonBalance(Number(fromNano(whiskBalance)));
+            } else {
+                setJettonBalance(0);
+            }
+        };
+        fetchBalance();
+    }, [userData?.userTonAddress]);
 
     if (loading && !isAppLoaded) {
         return <LoaderScreen />;
@@ -217,6 +231,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
                 updateFreeSpins,
                 updateBonusSpins,
                 updateUnclaimedWhisks,
+                jettonBalance
             }}
         >
             {children}
