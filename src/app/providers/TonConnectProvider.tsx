@@ -30,7 +30,7 @@ export const TonConnectProvider: React.FC<TonConnectProviderProps> = ({ children
         if (!tonConnectUIInstance) {
             console.log('Initializing TonConnectUI instance');
             tonConnectUIInstance = new TonConnectUI({
-                manifestUrl: 'https://pluswhale.github.io/whiskers/tonconnect-manifest.json',
+                manifestUrl: 'https://raw.githubusercontent.com/vanhauhoang/whisk-metadata/main/manifest.json',
             });
 
             tonConnectUIInstance.onStatusChange((wallet) => {
@@ -39,12 +39,12 @@ export const TonConnectProvider: React.FC<TonConnectProviderProps> = ({ children
             });
         }
 
-        return () => {
-            if (tonConnectUIInstance) {
-                console.log('Disconnecting TonConnectUI instance');
-                tonConnectUIInstance.disconnect();
-            }
-        };
+        // return () => {
+        //     if (tonConnectUIInstance) {
+        //         console.log('Disconnecting TonConnectUI instance');
+        //         tonConnectUIInstance.disconnect();
+        //     }
+        // };
     }, []);
 
     return (

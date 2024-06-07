@@ -6,39 +6,66 @@ import { useMediaQuery } from 'react-responsive';
 import { Flip, toast } from 'react-toastify';
 import { buySpinsByUser } from '../../shared/api/user/thunks';
 import { useAppContext } from '../../app/providers/AppContext';
+import { toNano, Address, beginCell, TonClient } from '@ton/ton';
+import { JETTON_MINTER_ADDRESS, TREASURY_ADDRESS, TRACE_API, NETWORK } from '../../contracts/config';
+import { JettonWallet } from '../../contracts/JettonWallet';
+import { JettonMinter } from '../../contracts/JettonMinter';
+import { getTxByBOC, sleep } from '../../contracts/utils';
+import { getHttpEndpoint } from '@orbs-network/ton-access';
+import { useTonConnectUI } from '@tonconnect/ui-react';
+import axios from 'axios';
 
 type BuyRow = {
     id: number;
     countSpin: number;
     countWhisk: number;
     userId: string | undefined;
+    userTonAddress: string | undefined;
 };
 
 export const BuyTokenRow: FC<BuyRow> = (row): ReactElement => {
     const isMobile = useMediaQuery({ query: '(max-width: 600px)' });
     const { updateBonusSpins } = useAppContext();
+    const [tonConnectUI] = useTonConnectUI();
 
-    const { id, countSpin, countWhisk, userId } = row;
+    const { id, countSpin, countWhisk, userId, userTonAddress } = row;
 
     const onBuyBonusToken = async (countSpin: number) => {
-        if (userId) {
-            const res = await buySpinsByUser(userId, { countSpins: countSpin });
+        if (userId && userTonAddress) {
+            // send jetton transfer message
+            const jettonAmount = toNano(countWhisk);
+            const to = Address.parse(TREASURY_ADDRESS);
+            const responseAddress = Address.parse(userTonAddress);
+            const customPayload = beginCell().endCell();
+            const forwardTonAmount = toNano('0.01');
+            const forwardPayload = beginCell().endCell();
+            const payload = JettonWallet.transferMessage(jettonAmount, to, responseAddress, customPayload, forwardTonAmount, forwardPayload);
 
-            if (res?.status === 200) {
-                updateBonusSpins(countSpin);
+            const endpoint = await getHttpEndpoint({ network: NETWORK });
+            const client = new TonClient({ endpoint });
+            const minter = new JettonMinter(Address.parse(JETTON_MINTER_ADDRESS));
+            const minterContract = client.open(minter);
 
-                toast.success(`You bought ${countSpin} spins`, {
-                    position: 'bottom-left',
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: 'dark',
-                    transition: Flip,
-                });
-            } else {
+            const jettonWalletAddress = await minterContract.getWalletAddressOf(Address.parse(userTonAddress));
+            const value = toNano('0.05');
+
+            const sendMsgRes = await tonConnectUI.sendTransaction({
+                messages: [
+                    {
+                        address: jettonWalletAddress.toString(),
+                        amount: value.toString(),
+                        payload: payload?.toBoc().toString('base64'),
+                    },],
+                validUntil: Date.now() + 5 * 60 * 1000, // 5 minutes for user to approve 
+            });
+            const exBoc = sendMsgRes.boc;
+            const txHash = await getTxByBOC(Address.parse(userTonAddress), exBoc);
+
+            await sleep(15000); // wait for 15 more seconds
+            const url = `${TRACE_API}${txHash}`;
+            const tonapiRes = await axios.get(url);
+            const txStatus = tonapiRes.data.children[0].transaction.success;
+            if (!txStatus) {
                 toast.error(`Can't buy spins.`, {
                     position: 'bottom-left',
                     autoClose: 3000,
@@ -50,6 +77,37 @@ export const BuyTokenRow: FC<BuyRow> = (row): ReactElement => {
                     theme: 'dark',
                     transition: Flip,
                 });
+            } else {
+                // update spins in database
+                const res = await buySpinsByUser(userId, { countSpins: countSpin });
+
+                if (res?.status === 200) {
+                    updateBonusSpins(countSpin);
+
+                    toast.success(`You bought ${countSpin} spins`, {
+                        position: 'bottom-left',
+                        autoClose: 3000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: 'dark',
+                        transition: Flip,
+                    });
+                } else {
+                    toast.error(`Can't buy spins.`, {
+                        position: 'bottom-left',
+                        autoClose: 3000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: 'dark',
+                        transition: Flip,
+                    });
+                }
             }
         } else {
             toast.error(`Can't buy spins.`, {

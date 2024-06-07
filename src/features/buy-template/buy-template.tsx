@@ -81,6 +81,7 @@ export const BuyTemplate: FC = (): ReactElement => {
                                 countSpin={buyRow.countSpins}
                                 countWhisk={buyRow.countWhisks}
                                 userId={userData?.userId}
+                                userTonAddress={userData?.userTonAddress}
                             />
                         ))}
                 </div>
@@ -96,7 +97,7 @@ export const BuyTemplate: FC = (): ReactElement => {
                             Wallet balance
                         </Typography>
                         <Typography fontSize={'16px'} fontFamily="Montserrat, sans-serif">
-                            {jettonBalance} WHISK
+                            {jettonBalance.toLocaleString()} WHISK
                         </Typography>
                     </div>
                 </div>
