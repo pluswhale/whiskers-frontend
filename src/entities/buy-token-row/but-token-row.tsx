@@ -110,7 +110,7 @@ export const BuyTokenRow: FC<BuyRow> = (row): ReactElement => {
                 }
             }
         } else {
-            toast.error(`Can't buy spins.`, {
+            toast.error(`Please connect TON wallet!`, {
                 position: 'bottom-left',
                 autoClose: 3000,
                 hideProgressBar: false,

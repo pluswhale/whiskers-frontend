@@ -1,6 +1,6 @@
 import React, { createContext, ReactElement, useContext, useEffect, useState } from 'react';
 import LoaderScreen from '../../features/loader-screen/LoaderScreen';
-import { loginUser, referralUser, spinWheelByUser } from '../../shared/api/user/thunks';
+import { loginUser, referralUser, spinWheelByUser, fetchSnapshotInfo } from '../../shared/api/user/thunks';
 import { useMediaQuery } from 'react-responsive';
 import { removeAllCookies } from '../../shared/libs/cookies';
 import { parseUriParamsLine } from '../../shared/utils/parseUriParams';
@@ -52,6 +52,9 @@ interface AppContextType {
     updateBonusSpins: (countSpins?: number) => void;
     updateTempWinScore: (score: number) => void;
     jettonBalance: number;
+    isClaimable: number | null;
+    airdropCell: string | null;
+    campaignNumber: number | null;
 }
 
 // Create the context
@@ -76,6 +79,9 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
     const [isAppLoaded, setIsAppLoaded] = useState<boolean>(false);
     const uriParams = parseUriParamsLine(window.location.href?.split('?')?.[1]);
     const [jettonBalance, setJettonBalance] = useState<number>(0);
+    const [isClaimable, setIsClaimable] = useState<number | null>(0);
+    const [airdropCell, setAirdropCell] = useState<string | null>("");
+    const [campaignNumber, setCampaignNumber] = useState<number | null>(0);
 
     useEffect(() => {
         return () => {
@@ -159,6 +165,24 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
         fetchBalance();
     }, [userData?.userTonAddress]);
 
+    // fetch snapshot info
+    useEffect(() => {
+        const fetchSnapshot = async () => {
+            try {
+                const res = await fetchSnapshotInfo();
+                console.log('snapshot info: ', res)
+                if (res) {
+                    setIsClaimable(res[0].isClaimable);
+                    setAirdropCell(res[0].airdropCell);
+                    setCampaignNumber(res[0].campaignNumber);
+                }
+            } catch (err) {
+                console.error('Fetching snapshot error: ', err);
+            }
+        }
+        fetchSnapshot();
+    }, []);
+
     if (loading && !isAppLoaded) {
         return <LoaderScreen />;
     }
@@ -231,7 +255,10 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
                 updateFreeSpins,
                 updateBonusSpins,
                 updateUnclaimedWhisks,
-                jettonBalance
+                jettonBalance,
+                isClaimable,
+                airdropCell,
+                campaignNumber
             }}
         >
             {children}

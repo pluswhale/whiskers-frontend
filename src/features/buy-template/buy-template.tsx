@@ -17,14 +17,28 @@ import { Flip, toast } from 'react-toastify';
 export const BuyTemplate: FC = (): ReactElement => {
     const navigate = useNavigate();
     const isMobile = useMediaQuery({ query: '(max-width: 600px)' });
-    const { userData, updateUnclaimedWhisks, jettonBalance } = useAppContext();
+    const { userData, updateUnclaimedWhisks, jettonBalance, isClaimable } = useAppContext();
+    console.log('isClaimable: ', isClaimable)
 
     const onNavigateToMainScreen = () => {
         navigate(-1);
     };
 
     const onClaimWhisks = () => {
-        if (userData?.userId) {
+        if (isClaimable != 1) {
+            toast.error(`Not snapshot yet. Please try again later`, {
+                position: 'bottom-left',
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'dark',
+                transition: Flip,
+            });
+        }
+        else if (userData?.userId) {
             claimWhisks(userData.userId)
                 .then((res) => {
                     updateUnclaimedWhisks();

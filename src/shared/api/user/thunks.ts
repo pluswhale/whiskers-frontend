@@ -69,3 +69,11 @@ export const claimWhisks = async (userId: string) => {
     }
 };
 
+export const fetchSnapshotInfo = async () => {
+    try {
+        const res = await userApi.getSnapshot();
+        return res.data;
+    } catch (err) {
+        console.error(err);
+    }
+}
