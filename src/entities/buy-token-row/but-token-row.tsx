@@ -26,12 +26,25 @@ type BuyRow = {
 export const BuyTokenRow: FC<BuyRow> = (row): ReactElement => {
     const isMobile = useMediaQuery({ query: '(max-width: 600px)' });
     const { updateBonusSpins } = useAppContext();
-    const [tonConnectUI] = useTonConnectUI();
+    const [tonConnectUI,] = useTonConnectUI();
 
     const { id, countSpin, countWhisk, userId, userTonAddress } = row;
 
     const onBuyBonusToken = async (countSpin: number) => {
-        if (userId && userTonAddress) {
+        if (!userTonAddress) {
+            toast.error(`Please connect TON wallet!`, {
+                position: 'bottom-left',
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'dark',
+                transition: Flip,
+            });
+        }
+        else if (userId && userTonAddress) {
             // send jetton transfer message
             const jettonAmount = toNano(countWhisk);
             const to = Address.parse(TREASURY_ADDRESS);
@@ -49,53 +62,24 @@ export const BuyTokenRow: FC<BuyRow> = (row): ReactElement => {
             const jettonWalletAddress = await minterContract.getWalletAddressOf(Address.parse(userTonAddress));
             const value = toNano('0.05');
 
-            const sendMsgRes = await tonConnectUI.sendTransaction({
-                messages: [
-                    {
-                        address: jettonWalletAddress.toString(),
-                        amount: value.toString(),
-                        payload: payload?.toBoc().toString('base64'),
-                    },],
-                validUntil: Date.now() + 5 * 60 * 1000, // 5 minutes for user to approve 
-            });
-            const exBoc = sendMsgRes.boc;
-            const txHash = await getTxByBOC(Address.parse(userTonAddress), exBoc);
-
-            await sleep(15000); // wait for 15 more seconds
-            const url = `${TRACE_API}${txHash}`;
-            const tonapiRes = await axios.get(url);
-            const txStatus = tonapiRes.data.children[0].transaction.success;
-            if (!txStatus) {
-                toast.error(`Can't buy spins.`, {
-                    position: 'bottom-left',
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: 'dark',
-                    transition: Flip,
+            try {
+                const sendMsgRes = await tonConnectUI.sendTransaction({
+                    messages: [
+                        {
+                            address: jettonWalletAddress.toString(),
+                            amount: value.toString(),
+                            payload: payload?.toBoc().toString('base64'),
+                        },],
+                    validUntil: Date.now() + 5 * 60 * 1000, // 5 minutes for user to approve 
                 });
-            } else {
-                // update spins in database
-                const res = await buySpinsByUser(userId, { countSpins: countSpin });
+                const exBoc = sendMsgRes.boc;
+                const txHash = await getTxByBOC(Address.parse(userTonAddress), exBoc);
 
-                if (res?.status === 200) {
-                    updateBonusSpins(countSpin);
-
-                    toast.success(`You bought ${countSpin} spins`, {
-                        position: 'bottom-left',
-                        autoClose: 3000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: 'dark',
-                        transition: Flip,
-                    });
-                } else {
+                await sleep(15000); // wait for 15 more seconds
+                const url = `${TRACE_API}${txHash}`;
+                const tonapiRes = await axios.get(url);
+                const txStatus = tonapiRes.data.children[0].transaction.success;
+                if (!txStatus) {
                     toast.error(`Can't buy spins.`, {
                         position: 'bottom-left',
                         autoClose: 3000,
@@ -107,20 +91,51 @@ export const BuyTokenRow: FC<BuyRow> = (row): ReactElement => {
                         theme: 'dark',
                         transition: Flip,
                     });
+                } else {
+                    // update spins in database
+                    const res = await buySpinsByUser(userId, { countSpins: countSpin });
+
+                    if (res?.status === 200) {
+                        updateBonusSpins(countSpin);
+
+                        toast.success(`You bought ${countSpin} spins`, {
+                            position: 'bottom-left',
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: 'dark',
+                            transition: Flip,
+                        });
+                    } else {
+                        toast.error(`Can't buy spins.`, {
+                            position: 'bottom-left',
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: 'dark',
+                            transition: Flip,
+                        });
+                    }
                 }
+            } catch (err) {
+                toast.error(`Please connect TON wallet!`, {
+                    position: 'bottom-left',
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: 'dark',
+                    transition: Flip,
+                });
             }
-        } else {
-            toast.error(`Please connect TON wallet!`, {
-                position: 'bottom-left',
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: 'dark',
-                transition: Flip,
-            });
         }
     };
     return (

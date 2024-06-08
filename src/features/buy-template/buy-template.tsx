@@ -18,7 +18,6 @@ export const BuyTemplate: FC = (): ReactElement => {
     const navigate = useNavigate();
     const isMobile = useMediaQuery({ query: '(max-width: 600px)' });
     const { userData, updateUnclaimedWhisks, jettonBalance, isClaimable } = useAppContext();
-    console.log('isClaimable: ', isClaimable)
 
     const onNavigateToMainScreen = () => {
         navigate(-1);
@@ -38,12 +37,12 @@ export const BuyTemplate: FC = (): ReactElement => {
                 transition: Flip,
             });
         }
-        else if (userData?.userId) {
+        else if (userData?.userId && userData?.userTonAddress) {
             claimWhisks(userData.userId)
                 .then((res) => {
                     updateUnclaimedWhisks();
                     if (res.status === 200) {
-                        toast.success(`You claimed ${userData?.unclaimedWhisks} whisks`, {
+                        toast.success(`You claimed ${userData?.unclaimedWhisks} $WHISK`, {
                             position: 'bottom-left',
                             autoClose: 3000,
                             hideProgressBar: false,
@@ -57,7 +56,7 @@ export const BuyTemplate: FC = (): ReactElement => {
                     }
                 })
                 .catch(() => {
-                    toast.error(`Cannot claim whisks. Try again`, {
+                    toast.error(`Cannot claim WHISK. Try again`, {
                         position: 'bottom-left',
                         autoClose: 3000,
                         hideProgressBar: false,
@@ -69,6 +68,18 @@ export const BuyTemplate: FC = (): ReactElement => {
                         transition: Flip,
                     });
                 });
+        } else {
+            toast.error(`Connect your TON Wallet and try again`, {
+                position: 'bottom-left',
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'dark',
+                transition: Flip,
+            });
         }
     };
 
