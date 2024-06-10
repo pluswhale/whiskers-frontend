@@ -3,6 +3,7 @@ import { BuySpinsBody, ReferralBody, SpinWheelBody } from './types';
 
 export const userApi = {
     getSnapshot: () => Instance.get(`snapshot`),
+    getAirdropList: () => Instance.get(`airdrop`),
     getUserInfoById: (id: string) => Instance.get(`user/${id}`),
     spinWheel: (userId: string, body: SpinWheelBody) => Instance.post(`spin/${userId}`, body),
     claimWhisks: (userId: string) => Instance.post(`claim-whisks/${userId}`),

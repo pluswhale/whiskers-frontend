@@ -19,8 +19,6 @@ interface WheelDesktopProps {
 }
 
 export const WheelDesktop: FC<WheelDesktopProps> = ({ isAvailableToSpin, isUserLoggedIn }): ReactElement => {
-    console.log('isAvailableToSpin', isAvailableToSpin);
-
     const isMobile = useMediaQuery({ query: '(max-width: 600px)' });
     const { isFreeSpins, updateFreeSpins, updateBonusSpins, updateTempWinScore } = useAppContext();
     const [isNeedRotateSpinIcon, setIsNeedRotateSpinIcon] = useState<boolean>(false);

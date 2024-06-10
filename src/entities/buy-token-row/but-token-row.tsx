@@ -26,13 +26,26 @@ type BuyRow = {
 export const BuyTokenRow: FC<BuyRow> = (row): ReactElement => {
     const isMobile = useMediaQuery({ query: '(max-width: 600px)' });
     const { updateBonusSpins } = useAppContext();
-    const [tonConnectUI,] = useTonConnectUI();
+    const [tonConnectUI] = useTonConnectUI();
+    const connected = tonConnectUI.connected;
 
     const { id, countSpin, countWhisk, userId, userTonAddress } = row;
 
     const onBuyBonusToken = async (countSpin: number) => {
         if (!userTonAddress) {
             toast.error(`Please connect TON wallet!`, {
+                position: 'bottom-left',
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'dark',
+                transition: Flip,
+            });
+        } else if (!connected) {
+            toast.error(`Please connect TON Wallet!`, {
                 position: 'bottom-left',
                 autoClose: 3000,
                 hideProgressBar: false,
@@ -124,7 +137,7 @@ export const BuyTokenRow: FC<BuyRow> = (row): ReactElement => {
                     }
                 }
             } catch (err) {
-                toast.error(`Please connect TON wallet!`, {
+                toast.error(`User reject transaction`, {
                     position: 'bottom-left',
                     autoClose: 3000,
                     hideProgressBar: false,

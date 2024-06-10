@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { createContext, ReactElement, useContext, useEffect, useState } from 'react';
 import LoaderScreen from '../../features/loader-screen/LoaderScreen';
-import { loginUser, referralUser, spinWheelByUser, fetchSnapshotInfo } from '../../shared/api/user/thunks';
+import { loginUser, referralUser, spinWheelByUser, fetchSnapshotInfo, fetchAirdropList } from '../../shared/api/user/thunks';
 import { useMediaQuery } from 'react-responsive';
 import { removeAllCookies } from '../../shared/libs/cookies';
 import { parseUriParamsLine } from '../../shared/utils/parseUriParams';
@@ -22,7 +24,7 @@ export interface UserData {
     referredUsers: any[];
     spinsAvailable: number;
     points: number;
-    unclaimedWhisks: number;
+    claimedWhisks: number;
     userTonAddress: string;
     updatedAt: string;
     lastSpinTime: string[];
@@ -48,13 +50,13 @@ interface AppContextType {
     isAvailableToSpin: boolean;
     tgUser: TelegramUserData | null;
     updateFreeSpins: () => void;
-    updateUnclaimedWhisks: () => void;
     updateBonusSpins: (countSpins?: number) => void;
     updateTempWinScore: (score: number) => void;
     jettonBalance: number;
     isClaimable: number | null;
     airdropCell: string | null;
     campaignNumber: number | null;
+    airdropList: any[]
 }
 
 // Create the context
@@ -82,6 +84,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
     const [isClaimable, setIsClaimable] = useState<number | null>(0);
     const [airdropCell, setAirdropCell] = useState<string | null>("");
     const [campaignNumber, setCampaignNumber] = useState<number | null>(0);
+    const [airdropList, setAirdropList] = useState<any[]>([]);
 
     useEffect(() => {
         return () => {
@@ -107,7 +110,6 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
             try {
                 const res = await loginUser(tgUser?.id?.toString() || '1559803968'); //574813379
                 if (res) {
-                    console.log('res: ', res);
                     setUserData(res.user);
                     if (uriParams?.tgWebAppStartParam) {
                         await referralUser(res.user.userId, {
@@ -115,7 +117,6 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
                         });
                     }
                 }
-                console.log('userData: ', userData);
             } catch (error) {
                 console.error('Error during login:', error);
             }
@@ -170,7 +171,6 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
         const fetchSnapshot = async () => {
             try {
                 const res = await fetchSnapshotInfo();
-                console.log('snapshot info: ', res)
                 if (res) {
                     setIsClaimable(res[0].isClaimable);
                     setAirdropCell(res[0].airdropCell);
@@ -182,6 +182,21 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
         }
         fetchSnapshot();
     }, []);
+
+    // fetch airdrop list
+    useEffect(() => {
+        const fetchAirdrop = async () => {
+            try {
+                const res = await fetchAirdropList();
+                if (res) {
+                    setAirdropList(res);
+                }
+            } catch (err) {
+                console.error('Fetching airdrop list failed: ', err);
+            }
+        }
+        fetchAirdrop();
+    }, [])
 
     if (loading && !isAppLoaded) {
         return <LoaderScreen />;
@@ -198,8 +213,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
                     setTimeout(() => {
                         setUserData((prevUserData: any) => ({
                             ...prevUserData,
-                            points: prevUserData.points + score,
-                            unclaimedWhisks: prevUserData.unclaimedWhisks + score,
+                            points: prevUserData.points + score
                         }));
                     }, WHEEL_SPINNING_SECONDS);
                 }
@@ -230,14 +244,6 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
         }
     };
 
-    const updateUnclaimedWhisks = () => {
-        setUserData((prevUserData: any) => ({
-            ...prevUserData,
-            points: 0,
-            unclaimedWhisks: 0,
-        }));
-    };
-
     function onExitFromApp() {
         removeAllCookies();
         tg.close();
@@ -254,11 +260,11 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
                 updateTempWinScore,
                 updateFreeSpins,
                 updateBonusSpins,
-                updateUnclaimedWhisks,
                 jettonBalance,
                 isClaimable,
                 airdropCell,
-                campaignNumber
+                campaignNumber,
+                airdropList
             }}
         >
             {children}
