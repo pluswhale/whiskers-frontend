@@ -41,16 +41,9 @@ export async function getTxByBOC(senderAddress: Address, exBoc: string): Promise
                 const extHash = Cell.fromBase64(exBoc).hash().toString('hex')
                 const inHash = beginCell().store(storeMessage(inMsg)).endCell().hash().toString('hex')
 
-                console.log(' hash BOC', extHash);
-                console.log('inMsg hash', inHash);
-                console.log('checking the tx', tx, tx.hash().toString('hex'));
-
                 // Assuming `inBOC.hash()` is synchronous and returns a hash object with a `toString` method
                 if (extHash === inHash) {
-                    console.log('Tx match');
                     const txHash = tx.hash().toString('hex');
-                    console.log(`Transaction Hash: ${txHash}`);
-                    console.log(`Transaction LT: ${tx.lt}`);
                     return (txHash);
                 }
             }
