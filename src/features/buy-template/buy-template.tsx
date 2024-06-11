@@ -236,7 +236,7 @@ export const BuyTemplate: FC = (): ReactElement => {
                 transition: Flip,
             });
         }
-        window.location.reload();
+        // window.location.reload();
     };
 
     return (
