@@ -107,18 +107,21 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
 
     useEffect(() => {
         const fetchUserData = async () => {
-            try {
-                const res = await loginUser(tgUser?.id?.toString() || '1559803968'); //574813379
-                if (res) {
-                    setUserData(res.user);
-                    if (uriParams?.tgWebAppStartParam) {
-                        await referralUser(res.user.userId, {
-                            referredById: uriParams?.tgWebAppStartParam?.split('#')?.[0],
-                        });
+            const userId = tgUser?.id?.toString();
+            if (userId) {
+                try {
+                    const res = await loginUser(userId);
+                    if (res) {
+                        setUserData(res.user);
+                        if (uriParams?.tgWebAppStartParam) {
+                            await referralUser(res.user.userId, {
+                                referredById: uriParams?.tgWebAppStartParam?.split('#')?.[0],
+                            });
+                        }
                     }
+                } catch (error) {
+                    console.error('Error during login:', error);
                 }
-            } catch (error) {
-                console.error('Error during login:', error);
             }
         };
 
