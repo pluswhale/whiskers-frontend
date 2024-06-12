@@ -27,7 +27,7 @@ export const TonConnectModal = () => {
             }
         }
 
-        window.location.href = '/';
+        window.location.href = '/whiskers';
     };
 
     useEffect(() => {
