@@ -52,6 +52,7 @@ interface AppContextType {
     updateFreeSpins: () => void;
     updateBonusSpins: (countSpins?: number) => void;
     updateTempWinScore: (score: number) => void;
+    updateClaimedWhisks: () => void;
     jettonBalance: number;
     isClaimable: number | null;
     airdropCell: string | null;
@@ -247,6 +248,29 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
         }
     };
 
+    const updateClaimedWhisks = () => {
+        const fetchUserData = async () => {
+            const userId = tgUser?.id?.toString();
+            if (userId) {
+                try {
+                    const res = await loginUser(userId);
+                    if (res) {
+                        setUserData(res.user);
+                        if (uriParams?.tgWebAppStartParam) {
+                            await referralUser(res.user.userId, {
+                                referredById: uriParams?.tgWebAppStartParam?.split('#')?.[0],
+                            });
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error during login:', error);
+                }
+            }
+        };
+
+        fetchUserData();
+    }
+
     function onExitFromApp() {
         removeAllCookies();
         tg.close();
@@ -263,6 +287,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
                 updateTempWinScore,
                 updateFreeSpins,
                 updateBonusSpins,
+                updateClaimedWhisks,
                 jettonBalance,
                 isClaimable,
                 airdropCell,

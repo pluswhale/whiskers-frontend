@@ -27,7 +27,7 @@ import { AirdropHelper } from '../../contracts/AirdropHelper';
 export const BuyTemplate: FC = (): ReactElement => {
     const navigate = useNavigate();
     const isMobile = useMediaQuery({ query: '(max-width: 600px)' });
-    const { userData, jettonBalance, isClaimable, airdropList, airdropCell, campaignNumber } = useAppContext();
+    const { userData, jettonBalance, isClaimable, airdropList, airdropCell, campaignNumber, updateClaimedWhisks } = useAppContext();
     const [tonConnectUI] = useTonConnectUI();
     const connected = tonConnectUI.connected;
 
@@ -179,6 +179,7 @@ export const BuyTemplate: FC = (): ReactElement => {
                         if (txStatus) {
                             claimWhisks(userData.userId)
                                 .then((res) => {
+                                    updateClaimedWhisks();
                                     if (res.message == 'successfully claimed whisks') {
                                         toast.success(`You claimed ${userUnclaimedAmount} $WHISK`, {
                                             position: 'bottom-left',
