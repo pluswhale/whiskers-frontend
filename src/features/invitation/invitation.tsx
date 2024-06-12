@@ -3,7 +3,7 @@ import { Button } from '../../shared/components/button';
 import giftIcon from '../../assets/images/gift_icon.png';
 
 import styles from './invitation.module.scss';
-import { Flip, toast } from 'react-toastify';
+// import { Flip, toast } from 'react-toastify';
 import { UserData } from '../../app/providers/AppContext';
 
 interface Props {
@@ -11,7 +11,11 @@ interface Props {
     userData: UserData | null;
 }
 
+const REF_TEXT = 'Spin and Earn WHISK';
+const WHISK_BOT_NAME = 'wheelwhiskbot/spinandearn';
+
 export const Invitation: FC<Props> = ({ isMobile, userData }): ReactElement => {
+    /*
     const copyToClipboard = async () => {
         if (!userData?.userId) {
             toast.error(`Cannot get a referal link :(`, {
@@ -28,7 +32,7 @@ export const Invitation: FC<Props> = ({ isMobile, userData }): ReactElement => {
         } else {
             try {
                 await navigator.clipboard.writeText(
-                    `Your referal links is: t.me/testWhiskers_bot/testwhisk?startapp=${userData?.userId}. Share it to your friends and you will get a bonus spins!`,
+                    `https://t.me/${WHISK_BOT_NAME}?startapp=${userData?.userId}`,
                 );
 
                 toast.success(`You copied ref link to clipboard`, {
@@ -57,11 +61,18 @@ export const Invitation: FC<Props> = ({ isMobile, userData }): ReactElement => {
             }
         }
     };
+    */
+
+    const handleClick = () => {
+        const refLink = `https://t.me/share/url?text=${REF_TEXT}&url=https://t.me/${WHISK_BOT_NAME}?startapp=${userData?.userId}`;
+        window.location.href = refLink;
+    }
 
     return (
         <div className={styles.app__invitation}>
             <Button
-                onClick={copyToClipboard}
+                // onClick={copyToClipboard}
+                onClick={handleClick}
                 imageLeft={giftIcon}
                 fontFamily={'Montserrat, sans-serif'}
                 height={isMobile ? '65px' : '200px'}
