@@ -268,12 +268,10 @@ export const BuyTemplate: FC = (): ReactElement => {
                         ))}
                 </div>
                 <div className={styles.buy__balance}>
-                    <img
-                        onClick={onNavigateToMainScreen}
-                        src={backIcon}
-                        className={styles.buy__balance_icon}
-                        alt="back to main screen"
-                    />
+                    <div onClick={onNavigateToMainScreen} className={styles.buy__back}>
+                        <img src={backIcon} className={styles.buy__back_icon} alt="back to main screen" />
+                        <Typography>Back</Typography>
+                    </div>
                     <div className={styles.buy__balance_value}>
                         <Typography fontSize={'14px'} fontFamily="Montserrat, sans-serif">
                             Wallet balance
