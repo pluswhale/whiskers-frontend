@@ -8,10 +8,10 @@ import { Typography } from '../../shared/components/typography';
 
 import styles from './wheel.module.scss';
 import { LottieAnimation } from '../lottie-animation/lottie-animation';
-import WinAnimation10 from '../../assets/animations/10-points-win-animation.json';
-import WinAnimation5 from '../../assets/animations/5-points-win-animation.json';
-import WinAnimation50 from '../../assets/animations/50-points-win-animation.json';
-import WinAnimation100 from '../../assets/animations/100-points-win-animation.json';
+import WinAnimation10 from '../../assets/animations/Main-10.json';
+import WinAnimation5 from '../../assets/animations/Main-05.json';
+import WinAnimation50 from '../../assets/animations/Main-50.json';
+import WinAnimation100 from '../../assets/animations/Main-100.json';
 import { Flip, toast } from 'react-toastify';
 import { SectorData, sectorsData } from './constants';
 import { WHEEL_SPINNING_SECONDS } from '../../shared/libs/constants';
