@@ -60,4 +60,3 @@ export const AudioProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     return <AudioContext.Provider value={{ startAudio, stopAudio, isPlaying }}>{children}</AudioContext.Provider>;
 };
-

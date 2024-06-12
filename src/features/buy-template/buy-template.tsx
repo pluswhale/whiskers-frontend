@@ -8,7 +8,7 @@ import { Typography } from '../../shared/components/typography';
 import { Button } from '../../shared/components/button';
 import { useMediaQuery } from 'react-responsive';
 import { FC, ReactElement } from 'react';
-import backIcon from '../../assets/images/left-arrow.png';
+import backIcon from '../../assets/images/back-arrow.png';
 import { useAppContext } from '../../app/providers/AppContext';
 import { TonConnectModal } from '../ton-connect-modal/ton-connect-modal';
 import { claimWhisks } from '../../shared/api/user/thunks';
