@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, ReactElement, useEffect, useRef, useState } from 'react';
 import kitty from '../../assets/images/kitty.png';
 import loaderIcon from '../../assets/images/loader.png';
@@ -8,6 +9,10 @@ import { Typography } from '../../shared/components/typography';
 import styles from './wheel.module.scss';
 import { LottieAnimation } from '../lottie-animation/lottie-animation';
 import coinAnimation from '../../assets/animations/coin-dollar.json';
+import WinAnimation10 from '../../assets/animations/10-points-win-animation.json';
+import WinAnimation5 from '../../assets/animations/5-points-win-animation.json';
+import WinAnimation50 from '../../assets/animations/50-points-win-animation.json';
+import WinAnimation100 from '../../assets/animations/100-points-win-animation.json';
 import { Flip, toast } from 'react-toastify';
 import { SectorData, sectorsData } from './constants';
 import { WHEEL_SPINNING_SECONDS } from '../../shared/libs/constants';
@@ -17,9 +22,19 @@ interface WheelMobileProps {
     isUserLoggedIn: boolean;
 }
 
+type WinAnimation = 5 | 10 | 50 | 100;
+
+const WinAnimations: { [key in WinAnimation]: any } = {
+    5: WinAnimation5,
+    10: WinAnimation10,
+    50: WinAnimation50,
+    100: WinAnimation100,
+};
+
 export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLoggedIn }): ReactElement => {
     const { isFreeSpins, updateFreeSpins, updateBonusSpins, updateTempWinScore } = useAppContext();
     const [isDisplayAnimation, setIsDisplayAnimation] = useState<boolean>(false);
+    const [winAnimation, setWinAnimation] = useState<WinAnimation | null>(null);
     const [isNeedRotateSpinIcon, setIsNeedRotateSpinIcon] = useState<boolean>(false);
     const audioRef = useRef<HTMLAudioElement>(null);
     const [imageLoaded, setImageLoaded] = useState(false);
@@ -139,11 +154,11 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
 
             setTimeout(() => {
                 setIsNeedRotateSpinIcon(false);
-            }, 9_000);
+            }, 10_500);
 
             setTimeout(() => {
                 setIsDisplayAnimation(false);
-            }, 12_000);
+            }, 10_500);
         } else {
             toast.error(`Cannot spin it`, {
                 position: 'bottom-left',
@@ -186,6 +201,7 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
         for (let i = 0, upperBorder = 0; i < sectorsData?.length; i++) {
             upperBorder += sectorsData?.[i]?.probability as number;
             if (randomNumber < upperBorder) {
+                setWinAnimation(sectorsData?.[i]?.value as WinAnimation);
                 updateTempWinScore(sectorsData?.[i]?.value); // add score setter and make request here
                 return i;
             }
@@ -408,9 +424,9 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
 
     return (
         <>
-            {isDisplayAnimation && (
+            {isDisplayAnimation && winAnimation && (
                 <div className={styles.app__coin_icon_animation}>
-                    <LottieAnimation animationData={coinAnimation} loop={0} autoplay={true} />
+                    <LottieAnimation animationData={WinAnimations[winAnimation]} loop={0} autoplay={true} />
                 </div>
             )}
             <audio ref={audioRef}>

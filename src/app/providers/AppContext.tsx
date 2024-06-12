@@ -219,7 +219,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
                             ...prevUserData,
                             points: prevUserData.points + score
                         }));
-                    }, WHEEL_SPINNING_SECONDS);
+                    }, WHEEL_SPINNING_SECONDS + 1000); // because a little delay in animation
                 }
             });
         }
