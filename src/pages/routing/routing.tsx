@@ -13,9 +13,9 @@ export const Routing: FC = (): ReactElement => {
         <Suspense fallback={<LoaderScreen />}>
             <BrowserRouter>
                 <Routes>
-                    <Route path="/whiskers" element={<AppLayout />}>
-                        <Route path="game" element={<MainPage />} />
-                        <Route path="buy" element={<BuyPage />} />
+                    <Route path="/" element={<AppLayout />}>
+                        <Route path="whiskers/game" element={<MainPage />} />
+                        <Route path="whiskers/buy" element={<BuyPage />} />
                     </Route>
                     <Route path="whiskers" element={<StartScreen />} />
 
