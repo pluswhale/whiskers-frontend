@@ -1,8 +1,8 @@
 .app {
     &__coin_icon_animation {
         position: absolute;
-        width: 265px;
-        top: 13.5%;
+        width: 334px;
+        top: 4.5%;
         z-index: 1;
         left: 50%;
         transform: translate(-50%, 0);
@@ -71,8 +71,8 @@
     from {
         transform: rotate(360deg);
     }
+
     to {
         transform: rotate(0deg);
     }
 }
-

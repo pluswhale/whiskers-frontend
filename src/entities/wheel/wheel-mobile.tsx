@@ -8,7 +8,6 @@ import { Typography } from '../../shared/components/typography';
 
 import styles from './wheel.module.scss';
 import { LottieAnimation } from '../lottie-animation/lottie-animation';
-import coinAnimation from '../../assets/animations/coin-dollar.json';
 import WinAnimation10 from '../../assets/animations/10-points-win-animation.json';
 import WinAnimation5 from '../../assets/animations/5-points-win-animation.json';
 import WinAnimation50 from '../../assets/animations/50-points-win-animation.json';
