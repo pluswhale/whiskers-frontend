@@ -284,7 +284,7 @@ export const BuyTemplate: FC = (): ReactElement => {
                 <div className={styles.buy__footer_connect}>
                     <div className={styles.buy__footer_connect_container}>
                         <div className={styles.buy__footer_connect_score}>
-                            <Typography fontSize={isMobile ? '18px' : '40px'}>Unclaimed whisk</Typography>
+                            <Typography fontSize={isMobile ? '18px' : '40px'}>Unclaimed WHISK</Typography>
                             <div className={styles.buy__footer_connect_tokens}>
                                 <Typography
                                     fontSize={isMobile ? '30px' : '50px'}
