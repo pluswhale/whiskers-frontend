@@ -6,7 +6,6 @@ import { loginUser, referralUser, spinWheelByUser, fetchSnapshotInfo, fetchAirdr
 import { useMediaQuery } from 'react-responsive';
 import { removeAllCookies } from '../../shared/libs/cookies';
 import { parseUriParamsLine } from '../../shared/utils/parseUriParams';
-import { WHEEL_SPINNING_SECONDS } from '../../shared/libs/constants';
 import DeviceCheckingScreen from '../../features/device-checking-screen/DeviceCheckingScreen';
 import MobileDetect from 'mobile-detect';
 
@@ -53,7 +52,7 @@ interface AppContextType {
     tgUser: TelegramUserData | null;
     updateFreeSpins: () => void;
     updateBonusSpins: (countSpins?: number) => void;
-    updateTempWinScore: (score: number) => void;
+    updateTempWinScore: (score: number, delay: number) => void;
     updateClaimedWhisks: () => void;
     jettonBalance: number;
     isClaimable: number | null;
@@ -217,7 +216,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
     }
 
     // Actions
-    const updateTempWinScore = (score: number) => {
+    const updateTempWinScore = (score: number, delay: number) => {
         if (userData?.userId) {
             spinWheelByUser(userData?.userId, {
                 winScore: score,
@@ -229,7 +228,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
                             ...prevUserData,
                             points: prevUserData.points + score
                         }));
-                    }, WHEEL_SPINNING_SECONDS + 1000); // because a little delay in animation
+                    }, delay); // because a little delay in animation
                 }
             });
         }
