@@ -11,8 +11,8 @@ interface Props {
     userData: UserData | null;
 }
 
-const REF_TEXT = 'Spin and Earn WHISK';
-const WHISK_BOT_NAME = 'wheelwhiskbot/spinandearn';
+const REF_TEXT = `Earn $WHISK daily for free by spinning the wheel 🤑🚀! Use my invite link and spin twice to give me 3 bonus spins 🤍👇`;
+const WHISK_BOT_NAME = 'spinearnbot/spinandearn';
 
 export const Invitation: FC<Props> = ({ isMobile, userData }): ReactElement => {
     /*
