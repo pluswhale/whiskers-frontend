@@ -7,6 +7,8 @@ import { useMediaQuery } from 'react-responsive';
 import { removeAllCookies } from '../../shared/libs/cookies';
 import { parseUriParamsLine } from '../../shared/utils/parseUriParams';
 import { WHEEL_SPINNING_SECONDS } from '../../shared/libs/constants';
+import DeviceCheckingScreen from '../../features/device-checking-screen/DeviceCheckingScreen';
+import MobileDetect from 'mobile-detect';
 
 import { TonClient, Address, JettonMaster, fromNano } from "@ton/ton";
 import { JettonWallet } from '../../contracts/JettonWallet';
@@ -86,6 +88,10 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
     const [airdropCell, setAirdropCell] = useState<string | null>("");
     const [campaignNumber, setCampaignNumber] = useState<number | null>(0);
     const [airdropList, setAirdropList] = useState<any[]>([]);
+    const userAgent = navigator.userAgent;
+    const md = new MobileDetect(userAgent);
+    const isMobileDevice = md.mobile() !== null;
+    const isTelegramWebApp = userAgent.includes('Telegram');
 
     useEffect(() => {
         return () => {
@@ -201,6 +207,10 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
         }
         fetchAirdrop();
     }, [])
+
+    if (!isMobileDevice || isTelegramWebApp) {
+        return <DeviceCheckingScreen />;
+    }
 
     if (loading && !isAppLoaded) {
         return <LoaderScreen />;
