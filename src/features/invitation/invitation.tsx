@@ -64,7 +64,7 @@ export const Invitation: FC<Props> = ({ isMobile, userData }): ReactElement => {
     */
 
     const handleClick = () => {
-        const refLink = `https://t.me/share/url?text=${REF_TEXT}&url=https://t.me/${WHISK_BOT_NAME}?startapp=${userData?.userId}`;
+        const refLink = `https://t.me/share/url?text=%0A${REF_TEXT}&url=https://t.me/${WHISK_BOT_NAME}?startapp=${userData?.userId}`;
         window.location.href = refLink;
     }
 
