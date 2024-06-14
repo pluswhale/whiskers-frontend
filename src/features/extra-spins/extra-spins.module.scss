@@ -15,10 +15,12 @@
             flex: 1;
             flex-direction: column;
             gap: 5px;
+
             &__score {
                 display: flex;
                 flex-direction: row;
                 gap: 12px;
+
                 &_p {
                     transform: translateY(3px);
                 }
@@ -34,6 +36,10 @@
             &__time_icon {
                 height: 20px;
                 transition: transform 1s ease;
+            }
+
+            &__time_text {
+                transform: translateY(2px);
             }
 
             .rotate {
@@ -62,3 +68,12 @@
     }
 }
 
+@keyframes rotate180 {
+    0% {
+        transform: rotate(0deg); // Start rotation from 0 degrees
+    }
+
+    100% {
+        transform: rotate(180deg); // Rotate by 180 degrees
+    }
+}

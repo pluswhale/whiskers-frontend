@@ -193,11 +193,16 @@ export const BuyTemplate: FC = (): ReactElement => {
                         const exBoc = claimMsgRes.boc;
                         const txHash = await getTxByBOC(Address.parse(userData?.userTonAddress), exBoc);
 
-                        await sleep(15000); // wait for 15 more seconds
-                        const url = `${TRACE_API}${txHash}`;
-                        const tonapiRes = await axios.get(url);
-                        const txStatus = tonapiRes.data.children[0].transaction.success;
-                        console.log('txStatus: ', txStatus);
+                        // await sleep(15000); // wait for 15 more seconds
+                        try {
+                            const url = `${TRACE_API}${txHash}`;
+                            const tonapiRes = await axios.get(url);
+                            const txStatus = tonapiRes.data.children[0].transaction.success;
+                            console.log('txStatus: ', txStatus);
+                        } catch (err) {
+                            console.log(err);
+                        }
+
                         // if (txStatus) {
                         claimWhisks(userData.userId)
                             .then((res) => {

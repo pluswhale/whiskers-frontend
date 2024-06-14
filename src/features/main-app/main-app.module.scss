@@ -16,9 +16,9 @@
         right: 10%;
 
         z-index: 1000;
+
         .icon {
-            filter: brightness(0) saturate(100%) invert(99%) sepia(1%) saturate(3675%) hue-rotate(165deg)
-                brightness(117%) contrast(100%);
+            filter: brightness(0) saturate(100%) invert(99%) sepia(1%) saturate(3675%) hue-rotate(165deg) brightness(117%) contrast(100%);
         }
     }
 
@@ -42,17 +42,8 @@
     from {
         transform: rotate(360deg);
     }
+
     to {
         transform: rotate(0deg);
     }
 }
-
-@keyframes rotate180 {
-    0% {
-        transform: rotate(0deg); // Start rotation from 0 degrees
-    }
-    100% {
-        transform: rotate(180deg); // Rotate by 180 degrees
-    }
-}
-

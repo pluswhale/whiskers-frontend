@@ -61,6 +61,21 @@ interface AppContextType {
     airdropList: any[]
 }
 
+const fetchAndUpdateUserData = async (userId: string, setUserData: (user: UserData) => void) => {
+    try {
+        const res = await loginUser(userId); // Adjust the endpoint and method as needed
+        if (res) {
+            //@ts-ignore
+            setUserData((prev: UserData): UserData => {
+                return { ...prev, lastSpinTime: res?.user?.lastSpinTime };
+            });
+            // Assume the backend handles spin recharging
+        }
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+    }
+};
+
 // Create the context
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
@@ -205,7 +220,26 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
             }
         }
         fetchAirdrop();
-    }, [])
+    }, []);
+
+    useEffect(() => {
+        if (userData && userData?.lastSpinTime?.length > 0) {
+            const checkSpinTimes = () => {
+                const now = new Date();
+                userData.lastSpinTime.forEach(async (spinTime) => {
+                    if (new Date(spinTime) <= now) {
+                        if (tgUser?.id?.toString()) {
+                            await fetchAndUpdateUserData(tgUser?.id?.toString(), setUserData);
+                        }
+                    }
+                });
+            };
+
+            const interval = setInterval(checkSpinTimes, 1000);
+
+            return () => clearInterval(interval);
+        }
+    }, [tgUser?.id, userData?.lastSpinTime]);
 
     if (!isMobileDevice || isTelegramWebApp) {
         return <DeviceCheckingScreen />;
@@ -221,8 +255,12 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
             spinWheelByUser(userData?.userId, {
                 winScore: score,
                 isFreeSpin: isFreeSpins,
-            }).then((res) => {
+            }).then(async (res) => {
                 if (res && res.status && res?.status === 200) {
+                    const userId = tgUser?.id?.toString();
+                    if (userId) {
+                        await fetchAndUpdateUserData(userId, setUserData);
+                    }
                     setTimeout(() => {
                         setUserData((prevUserData: any) => ({
                             ...prevUserData,
