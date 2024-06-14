@@ -30,7 +30,7 @@ export const TonConnectProvider: React.FC<TonConnectProviderProps> = ({ children
         if (!tonConnectUIInstance) {
             console.log('Initializing TonConnectUI instance');
             tonConnectUIInstance = new TonConnectUI({
-                manifestUrl: 'https://raw.githubusercontent.com/vanhauhoang/whisk-metadata/main/manifest.json',
+                manifestUrl: 'https://raw.githubusercontent.com/vanhauhoang/whisk-metadata/main/wheel-metadata.json',
             });
 
             tonConnectUIInstance.onStatusChange((wallet) => {

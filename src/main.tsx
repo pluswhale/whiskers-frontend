@@ -12,7 +12,7 @@ import { THEME, TonConnectUIProvider } from '@tonconnect/ui-react';
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <TonConnectUIProvider
-            manifestUrl="https://raw.githubusercontent.com/vanhauhoang/whisk-metadata/main/manifest.json"
+            manifestUrl="https://raw.githubusercontent.com/vanhauhoang/whisk-metadata/main/wheel-metadata.json"
             uiPreferences={{ theme: THEME.DARK }}
             walletsListConfiguration={{
                 includeWallets: [
