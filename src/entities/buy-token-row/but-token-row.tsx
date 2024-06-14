@@ -159,7 +159,7 @@ export const BuyTokenRow: FC<BuyRow> = (row): ReactElement => {
                     validUntil: Date.now() + 5 * 60 * 1000, // 5 minutes for user to approve 
                 });
 
-                await sleep(30000); // wait for 30 more seconds
+                await sleep(15000); // wait for 30 more seconds
                 // update spins in database
                 const res = await buySpinsByUser(userId, { countSpins: countSpin });
 
