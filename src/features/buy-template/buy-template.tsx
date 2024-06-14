@@ -176,26 +176,13 @@ export const BuyTemplate: FC = (): ReactElement => {
                         const url = `${TRACE_API}${txHash}`;
                         const tonapiRes = await axios.get(url);
                         const txStatus = tonapiRes.data.children[0].transaction.success;
-                        if (txStatus) {
-                            claimWhisks(userData.userId)
-                                .then((res) => {
-                                    updateClaimedWhisks();
-                                    if (res.message == 'successfully claimed whisks') {
-                                        toast.success(`You claimed ${userUnclaimedAmount} $WHISK`, {
-                                            position: 'bottom-left',
-                                            autoClose: 3000,
-                                            hideProgressBar: false,
-                                            closeOnClick: true,
-                                            pauseOnHover: true,
-                                            draggable: true,
-                                            progress: undefined,
-                                            theme: 'dark',
-                                            transition: Flip,
-                                        });
-                                    }
-                                })
-                                .catch(() => {
-                                    toast.error(`Cannot claim WHISK. Try again`, {
+                        console.log('txStatus: ', txStatus);
+                        // if (txStatus) {
+                        claimWhisks(userData.userId)
+                            .then((res) => {
+                                updateClaimedWhisks();
+                                if (res.message == 'successfully claimed whisks') {
+                                    toast.success(`You claimed ${userUnclaimedAmount} $WHISK`, {
                                         position: 'bottom-left',
                                         autoClose: 3000,
                                         hideProgressBar: false,
@@ -206,8 +193,22 @@ export const BuyTemplate: FC = (): ReactElement => {
                                         theme: 'dark',
                                         transition: Flip,
                                     });
+                                }
+                            })
+                            .catch(() => {
+                                toast.error(`Cannot claim WHISK. Try again`, {
+                                    position: 'bottom-left',
+                                    autoClose: 3000,
+                                    hideProgressBar: false,
+                                    closeOnClick: true,
+                                    pauseOnHover: true,
+                                    draggable: true,
+                                    progress: undefined,
+                                    theme: 'dark',
+                                    transition: Flip,
                                 });
-                        }
+                            });
+                        // }
                     } catch (err) {
                         toast.error(`User reject transaction`, {
                             position: 'bottom-left',
