@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 //@ts-ignore
-const hostBackendUrl = 'https://whisk-bot-be-b1887383233e.herokuapp.com/spin-and-earn/';
+const hostBackendUrl = 'https://whisk-wheel-bot-c25a548e192c.herokuapp.com//spin-and-earn/';
 //@ts-ignore
 const localBackendUrl = 'http://localhost:4000/spin-and-earn/';
 
