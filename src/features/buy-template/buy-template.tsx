@@ -188,6 +188,7 @@ export const BuyTemplate: FC = (): ReactElement => {
                             validUntil: Date.now() + 5 * 60 * 1000, // 5 minutes for user to approve 
                         });
                         await waitForContractDeploy(helper.address, client!);
+                        await sleep(10000);
                         await helper.sendClaim(123n, proof);
 
                         const exBoc = claimMsgRes.boc;
@@ -249,10 +250,10 @@ export const BuyTemplate: FC = (): ReactElement => {
                         });
                         return;
                     }
-                    if (await client.isContractDeployed(helper.address)) {
-                        if (!await helper.getClaimed()) {
-                            await helper.sendClaim(123n, proof);
-                        }
+                }
+                if (await client.isContractDeployed(helper.address)) {
+                    if (!await helper.getClaimed()) {
+                        await helper.sendClaim(123n, proof);
                     }
                 }
             }
