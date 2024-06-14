@@ -205,8 +205,9 @@ export const BuyTemplate: FC = (): ReactElement => {
                         }
 
                         // if (txStatus) {
-                        claimWhisks(userData.userId)
-                            .then((res) => {
+                        try {
+                            const res = await claimWhisks(userData.userId);
+                            if (res) {
                                 updateClaimedWhisks();
                                 if (res.message == 'successfully claimed whisks') {
                                     toast.success(`You claimed ${userUnclaimedAmount} $WHISK`, {
@@ -221,20 +222,20 @@ export const BuyTemplate: FC = (): ReactElement => {
                                         transition: Flip,
                                     });
                                 }
-                            })
-                            .catch(() => {
-                                toast.error(`Cannot claim WHISK. Try again`, {
-                                    position: 'bottom-left',
-                                    autoClose: 3000,
-                                    hideProgressBar: false,
-                                    closeOnClick: true,
-                                    pauseOnHover: true,
-                                    draggable: true,
-                                    progress: undefined,
-                                    theme: 'dark',
-                                    transition: Flip,
-                                });
+                            }
+                        } catch (err) {
+                            toast.error(`Cannot claim WHISK. Try again`, {
+                                position: 'bottom-left',
+                                autoClose: 3000,
+                                hideProgressBar: false,
+                                closeOnClick: true,
+                                pauseOnHover: true,
+                                draggable: true,
+                                progress: undefined,
+                                theme: 'dark',
+                                transition: Flip,
                             });
+                        }
                         // }
                     } catch (err) {
                         toast.error(`User reject transaction`, {

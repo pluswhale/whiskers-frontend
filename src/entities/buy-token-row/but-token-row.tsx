@@ -74,80 +74,6 @@ export const BuyTokenRow: FC<BuyRow> = (row): ReactElement => {
             const jettonWalletAddress = await minterContract.getWalletAddressOf(Address.parse(userTonAddress));
             const value = toNano('0.05');
 
-            // try {
-            //     const sendMsgRes = await tonConnectUI.sendTransaction({
-            //         messages: [
-            //             {
-            //                 address: jettonWalletAddress.toString(),
-            //                 amount: value.toString(),
-            //                 payload: payload?.toBoc().toString('base64'),
-            //             },],
-            //         validUntil: Date.now() + 5 * 60 * 1000, // 5 minutes for user to approve 
-            //     });
-            //     const exBoc = sendMsgRes.boc;
-            //     const txHash = await getTxByBOC(Address.parse(userTonAddress), exBoc);
-
-            //     await sleep(15000); // wait for 15 more seconds
-            //     const url = `${TRACE_API}${txHash}`;
-            //     const tonapiRes = await axios.get(url);
-            //     const txStatus = tonapiRes.data.children[0].transaction.success;
-            //     if (!txStatus) {
-            //         toast.error(`Can't buy spins.`, {
-            //             position: 'bottom-left',
-            //             autoClose: 3000,
-            //             hideProgressBar: false,
-            //             closeOnClick: true,
-            //             pauseOnHover: true,
-            //             draggable: true,
-            //             progress: undefined,
-            //             theme: 'dark',
-            //             transition: Flip,
-            //         });
-            //     } else {
-            //         // update spins in database
-            //         const res = await buySpinsByUser(userId, { countSpins: countSpin });
-
-            //         if (res?.status === 200) {
-            //             updateBonusSpins(countSpin);
-
-            //             toast.success(`You bought ${countSpin} spins`, {
-            //                 position: 'bottom-left',
-            //                 autoClose: 3000,
-            //                 hideProgressBar: false,
-            //                 closeOnClick: true,
-            //                 pauseOnHover: true,
-            //                 draggable: true,
-            //                 progress: undefined,
-            //                 theme: 'dark',
-            //                 transition: Flip,
-            //             });
-            //         } else {
-            //             toast.error(`Can't buy spins.`, {
-            //                 position: 'bottom-left',
-            //                 autoClose: 3000,
-            //                 hideProgressBar: false,
-            //                 closeOnClick: true,
-            //                 pauseOnHover: true,
-            //                 draggable: true,
-            //                 progress: undefined,
-            //                 theme: 'dark',
-            //                 transition: Flip,
-            //             });
-            //         }
-            //     }
-            // } catch (err) {
-            //     toast.error(`User reject transaction`, {
-            //         position: 'bottom-left',
-            //         autoClose: 3000,
-            //         hideProgressBar: false,
-            //         closeOnClick: true,
-            //         pauseOnHover: true,
-            //         draggable: true,
-            //         progress: undefined,
-            //         theme: 'dark',
-            //         transition: Flip,
-            //     });
-            // }
             try {
                 await tonConnectUI.sendTransaction({
                     messages: [
@@ -159,7 +85,7 @@ export const BuyTokenRow: FC<BuyRow> = (row): ReactElement => {
                     validUntil: Date.now() + 5 * 60 * 1000, // 5 minutes for user to approve 
                 });
 
-                await sleep(15000); // wait for 30 more seconds
+                await sleep(18000); // wait for 30 more seconds
                 // update spins in database
                 const res = await buySpinsByUser(userId, { countSpins: countSpin });
 

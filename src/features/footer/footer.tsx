@@ -181,7 +181,7 @@ export const Footer: FC<Props> = ({ points, claimedWhisks, isMobile }): ReactEle
                             validUntil: Date.now() + 5 * 60 * 1000, // 5 minutes for user to approve 
                         });
                         await waitForContractDeploy(helper.address, client!);
-                        await sleep(10000);
+                        await sleep(18000);
                         await helper.sendClaim(123n, proof);
 
                         const exBoc = claimMsgRes.boc;
@@ -198,8 +198,9 @@ export const Footer: FC<Props> = ({ points, claimedWhisks, isMobile }): ReactEle
                         }
 
                         // if (txStatus) {
-                        claimWhisks(userData.userId)
-                            .then((res) => {
+                        try {
+                            const res = await claimWhisks(userData.userId);
+                            if (res) {
                                 updateClaimedWhisks();
                                 if (res.message == 'successfully claimed whisks') {
                                     toast.success(`You claimed ${userUnclaimedAmount} $WHISK`, {
@@ -214,20 +215,20 @@ export const Footer: FC<Props> = ({ points, claimedWhisks, isMobile }): ReactEle
                                         transition: Flip,
                                     });
                                 }
-                            })
-                            .catch(() => {
-                                toast.error(`Cannot claim WHISK. Try again`, {
-                                    position: 'bottom-left',
-                                    autoClose: 3000,
-                                    hideProgressBar: false,
-                                    closeOnClick: true,
-                                    pauseOnHover: true,
-                                    draggable: true,
-                                    progress: undefined,
-                                    theme: 'dark',
-                                    transition: Flip,
-                                });
+                            }
+                        } catch (err) {
+                            toast.error(`Cannot claim WHISK. Try again`, {
+                                position: 'bottom-left',
+                                autoClose: 3000,
+                                hideProgressBar: false,
+                                closeOnClick: true,
+                                pauseOnHover: true,
+                                draggable: true,
+                                progress: undefined,
+                                theme: 'dark',
+                                transition: Flip,
                             });
+                        }
                         // }
                     } catch (err) {
                         toast.error(`User reject transaction`, {
