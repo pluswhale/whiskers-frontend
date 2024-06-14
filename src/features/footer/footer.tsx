@@ -74,6 +74,26 @@ export const Footer: FC<Props> = ({ points, claimedWhisks, isMobile }): ReactEle
             });
         }
         else if (userData?.userId && userData?.userTonAddress && campaignNumber) {
+            // check correct wallet address
+            const userIdIndex = airdropList.findIndex(obj => obj.userId.toString() == userData?.userId.toString());
+            if (userIdIndex != -1) {
+                const snapshotAddress = airdropList[userIdIndex].userTonAddress.toString();
+                if (snapshotAddress != userData?.userTonAddress.toString()) {
+                    toast.error(`Please connect with previous wallet to claim or wait until next snapshot at 7:00 GMT`, {
+                        position: 'bottom-left',
+                        autoClose: 3000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: 'dark',
+                        transition: Flip,
+                    });
+                    return;
+                }
+            }
+
             const endpoint = await getHttpEndpoint({ network: NETWORK });
             const client = new TonClient({ endpoint });
 
