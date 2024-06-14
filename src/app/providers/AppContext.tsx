@@ -89,7 +89,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
     const [airdropList, setAirdropList] = useState<any[]>([]);
     const userAgent = navigator.userAgent;
     const md = new MobileDetect(userAgent);
-    const isMobileDevice = md.mobile() !== null;
+    const isMobileDevice = (md.mobile() !== null) || (md.tablet() !== null);
     const isTelegramWebApp = userAgent.includes('Telegram');
 
     useEffect(() => {
