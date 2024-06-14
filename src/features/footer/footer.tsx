@@ -49,7 +49,7 @@ export const Footer: FC<Props> = ({ points, claimedWhisks, isMobile }): ReactEle
 
     const onClaimWhisks = async () => {
         if (isClaimable != 1) {
-            toast.error(`Not snapshot yet. Please try again later`, {
+            toast.error(`No snapshot yet. Claim after 7:00 GMT`, {
                 position: 'bottom-left',
                 autoClose: 3000,
                 hideProgressBar: false,
