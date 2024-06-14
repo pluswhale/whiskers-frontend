@@ -242,6 +242,11 @@ export const Footer: FC<Props> = ({ points, claimedWhisks, isMobile }): ReactEle
                         });
                         return;
                     }
+                    if (await client.isContractDeployed(helper.address)) {
+                        if (!await helper.getClaimed()) {
+                            await helper.sendClaim(123n, proof);
+                        }
+                    }
                 }
             }
         } else {
