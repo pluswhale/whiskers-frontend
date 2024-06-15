@@ -10,7 +10,7 @@ import { toNano, Address, beginCell, TonClient } from '@ton/ton';
 import { JETTON_MINTER_ADDRESS, TREASURY_ADDRESS, NETWORK } from '../../contracts/config';
 import { JettonWallet } from '../../contracts/JettonWallet';
 import { JettonMinter } from '../../contracts/JettonMinter';
-import { sleep } from '../../contracts/utils';
+// import { sleep } from '../../contracts/utils';
 import { getHttpEndpoint } from '@orbs-network/ton-access';
 import { useTonConnectUI } from '@tonconnect/ui-react';
 
@@ -85,7 +85,7 @@ export const BuyTokenRow: FC<BuyRow> = (row): ReactElement => {
                     validUntil: Date.now() + 5 * 60 * 1000, // 5 minutes for user to approve 
                 });
 
-                await sleep(18000); // wait for 30 more seconds
+                // await sleep(18000); // wait for 30 more seconds
                 // update spins in database
                 const res = await buySpinsByUser(userId, { countSpins: countSpin });
 
