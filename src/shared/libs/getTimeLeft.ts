@@ -1,5 +1,8 @@
 export function getTimeLeftFromTimestamp(timestamp: string): string {
     console.log('timestamp', timestamp);
+    if (timestamp == '') {
+        return '5 hours';
+    }
 
     const now = new Date();
     const targetTime = new Date(new Date(timestamp).getTime() + 6 * 60 * 60 * 1000); // Adjusted target time
