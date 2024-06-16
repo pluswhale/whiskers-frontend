@@ -223,7 +223,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
     }, []);
 
     useEffect(() => {
-        if (userData && userData?.lastSpinTime?.length > 0) {
+        if (userData && userData?.lastSpinTime?.length >= 0) {
             const checkSpinTimes = () => {
                 const now = new Date();
                 userData.lastSpinTime.forEach(async (spinTime) => {
