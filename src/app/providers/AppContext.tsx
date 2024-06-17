@@ -2,17 +2,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { createContext, ReactElement, useContext, useEffect, useState } from 'react';
 import LoaderScreen from '../../features/loader-screen/LoaderScreen';
-import { loginUser, referralUser, spinWheelByUser, fetchSnapshotInfo, fetchAirdropList } from '../../shared/api/user/thunks';
+import {
+    loginUser,
+    referralUser,
+    spinWheelByUser,
+    fetchSnapshotInfo,
+    fetchAirdropList,
+} from '../../shared/api/user/thunks';
 import { useMediaQuery } from 'react-responsive';
 import { removeAllCookies } from '../../shared/libs/cookies';
 import { parseUriParamsLine } from '../../shared/utils/parseUriParams';
 import DeviceCheckingScreen from '../../features/device-checking-screen/DeviceCheckingScreen';
 import MobileDetect from 'mobile-detect';
 
-import { TonClient, Address, JettonMaster, fromNano } from "@ton/ton";
+import { TonClient, Address, JettonMaster, fromNano } from '@ton/ton';
 import { JettonWallet } from '../../contracts/JettonWallet';
-import { getHttpEndpoint } from "@orbs-network/ton-access";
+import { getHttpEndpoint } from '@orbs-network/ton-access';
 import { NETWORK, JETTON_MINTER_ADDRESS } from '../../contracts/config';
+
+const testUserId = '23903828902';
 
 //@ts-ignore
 const tg: any = window?.Telegram?.WebApp;
@@ -58,7 +66,7 @@ interface AppContextType {
     isClaimable: number | null;
     airdropCell: string | null;
     campaignNumber: number | null;
-    airdropList: any[]
+    airdropList: any[];
 }
 
 const fetchAndUpdateUserData = async (userId: string, setUserData: (user: UserData) => void) => {
@@ -99,12 +107,12 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
     const uriParams = parseUriParamsLine(window.location.href?.split('?')?.[1]);
     const [jettonBalance, setJettonBalance] = useState<number>(0);
     const [isClaimable, setIsClaimable] = useState<number | null>(0);
-    const [airdropCell, setAirdropCell] = useState<string | null>("");
+    const [airdropCell, setAirdropCell] = useState<string | null>('');
     const [campaignNumber, setCampaignNumber] = useState<number | null>(0);
     const [airdropList, setAirdropList] = useState<any[]>([]);
     const userAgent = navigator.userAgent;
     const md = new MobileDetect(userAgent);
-    const isMobileDevice = (md.mobile() !== null) || (md.tablet() !== null);
+    const isMobileDevice = md.mobile() !== null || md.tablet() !== null;
     const isTelegramWebApp = userAgent.includes('Telegram');
 
     useEffect(() => {
@@ -129,21 +137,21 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
     useEffect(() => {
         const fetchUserData = async () => {
             const userId = tgUser?.id?.toString();
-            if (userId) {
-                try {
-                    const res = await loginUser(userId);
-                    if (res) {
-                        setUserData(res.user);
-                        if (uriParams?.tgWebAppStartParam) {
-                            await referralUser(res.user.userId, {
-                                referredById: uriParams?.tgWebAppStartParam?.split('#')?.[0],
-                            });
-                        }
+            // if (userId) {
+            try {
+                const res = await loginUser(userId || testUserId);
+                if (res) {
+                    setUserData(res.user);
+                    if (uriParams?.tgWebAppStartParam) {
+                        await referralUser(res.user.userId, {
+                            referredById: uriParams?.tgWebAppStartParam?.split('#')?.[0],
+                        });
                     }
-                } catch (error) {
-                    console.error('Error during login:', error);
                 }
+            } catch (error) {
+                console.error('Error during login:', error);
             }
+            // }
         };
 
         fetchUserData();
@@ -178,7 +186,9 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
             const minterContract = client.open(minter);
 
             if (userData?.userTonAddress) {
-                const jettonWalletAddress = await minterContract.getWalletAddress(Address.parse(userData?.userTonAddress));
+                const jettonWalletAddress = await minterContract.getWalletAddress(
+                    Address.parse(userData?.userTonAddress),
+                );
                 const userJettonWallet = new JettonWallet(jettonWalletAddress);
                 const userJettonWalletContract = client.open(userJettonWallet);
                 const whiskBalance = await userJettonWalletContract.getJettonBalance();
@@ -203,7 +213,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
             } catch (err) {
                 console.error('Fetching snapshot error: ', err);
             }
-        }
+        };
         fetchSnapshot();
     }, []);
 
@@ -218,7 +228,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
             } catch (err) {
                 console.error('Fetching airdrop list failed: ', err);
             }
-        }
+        };
         fetchAirdrop();
     }, []);
 
@@ -228,9 +238,9 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
                 const now = new Date();
                 userData.lastSpinTime.forEach(async (spinTime) => {
                     if (new Date(spinTime) <= now) {
-                        if (tgUser?.id?.toString()) {
-                            await fetchAndUpdateUserData(tgUser?.id?.toString(), setUserData);
-                        }
+                        // if (tgUser?.id?.toString()) {
+                        await fetchAndUpdateUserData(tgUser?.id?.toString() || testUserId, setUserData);
+                        // }
                     }
                 });
             };
@@ -264,7 +274,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
                     setTimeout(() => {
                         setUserData((prevUserData: any) => ({
                             ...prevUserData,
-                            points: prevUserData.points + score
+                            points: prevUserData.points + score,
                         }));
                     }, delay); // because a little delay in animation
                 }
@@ -316,7 +326,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
         };
 
         fetchUserData();
-    }
+    };
 
     function onExitFromApp() {
         removeAllCookies();
@@ -339,7 +349,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
                 isClaimable,
                 airdropCell,
                 campaignNumber,
-                airdropList
+                airdropList,
             }}
         >
             {children}
