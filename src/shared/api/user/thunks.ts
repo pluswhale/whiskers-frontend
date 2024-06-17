@@ -76,13 +76,13 @@ export const fetchSnapshotInfo = async () => {
     } catch (err) {
         console.error(err);
     }
-}
+};
 
 export const fetchAirdropList = async () => {
     try {
         const res = await userApi.getAirdropList();
-        return res.data[0].users;
+        return res.data?.[0]?.users;
     } catch (err) {
         console.error(err);
     }
-}
+};

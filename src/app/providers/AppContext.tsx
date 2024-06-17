@@ -157,7 +157,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
         };
 
         fetchUserData();
-    }, [tgUser?.id, uriParams?.startapp]);
+    }, []); //tgUser?.id, uriParams?.startapp
 
     useEffect(() => {
         //@ts-ignore
