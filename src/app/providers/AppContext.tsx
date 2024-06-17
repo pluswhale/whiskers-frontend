@@ -138,6 +138,8 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
         const fetchUserData = async () => {
             const userId = tgUser?.id?.toString();
             // if (userId) {
+            console.log('IM LOGIN REQUEST');
+
             try {
                 const res = await loginUser(userId || testUserId);
                 if (res) {
