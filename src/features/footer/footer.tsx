@@ -181,7 +181,7 @@ export const Footer: FC<Props> = ({ points, claimedWhisks, isMobile }): ReactEle
                             validUntil: Date.now() + 5 * 60 * 1000, // 5 minutes for user to approve 
                         });
                         await waitForContractDeploy(helper.address, client!);
-                        await sleep(18000);
+                        await sleep(1500);
                         await helper.sendClaim(123n, proof);
 
                         const exBoc = claimMsgRes.boc;
