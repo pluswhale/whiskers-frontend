@@ -181,6 +181,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
 
     // fetch WHISK balance
     useEffect(() => {
+        //@ts-ignore
         const fetchBalance = async () => {
             const endpoint = await getHttpEndpoint({ network: NETWORK });
             const client = new TonClient({ endpoint });
@@ -199,11 +200,12 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
                 setJettonBalance(0);
             }
         };
-        fetchBalance();
+        // fetchBalance();
     }, [userData?.userTonAddress]);
 
     // fetch snapshot info
     useEffect(() => {
+        //@ts-ignore
         const fetchSnapshot = async () => {
             try {
                 const res = await fetchSnapshotInfo();
@@ -216,11 +218,12 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
                 console.error('Fetching snapshot error: ', err);
             }
         };
-        fetchSnapshot();
+        // fetchSnapshot();
     }, []);
 
     // fetch airdrop list
     useEffect(() => {
+        //@ts-ignore
         const fetchAirdrop = async () => {
             try {
                 const res = await fetchAirdropList();
@@ -231,7 +234,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
                 console.error('Fetching airdrop list failed: ', err);
             }
         };
-        fetchAirdrop();
+        // fetchAirdrop();
     }, []);
 
     useEffect(() => {
