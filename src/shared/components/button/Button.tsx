@@ -12,11 +12,13 @@ type Props = {
     fontWeight?: string;
     imageLeft?: string;
     imageRight?: string;
+    backgroundImage?: string;
     width?: string;
     textTransform?: any;
     borderRadius?: string;
     stylesForTexts?: { main: CSSProperties; sub: CSSProperties };
     onClick?: () => void;
+    disabled?: boolean;
 };
 
 export const Button: FC<Props> = (props): ReactElement => {
@@ -27,14 +29,15 @@ export const Button: FC<Props> = (props): ReactElement => {
         height = '',
         fontFamily,
         fontWeight,
-        boxShadow,
         imageLeft,
         imageRight,
+        backgroundImage,
         backgroundColor,
         width = '100%',
         textTransform = 'uppercase',
         borderRadius,
         stylesForTexts,
+        disabled,
         onClick,
     } = props;
 
@@ -53,6 +56,7 @@ export const Button: FC<Props> = (props): ReactElement => {
 
     return (
         <button
+            disabled={disabled || false}
             onClick={onClick || undefined}
             style={{
                 fontSize,
@@ -63,8 +67,11 @@ export const Button: FC<Props> = (props): ReactElement => {
                 width,
                 textTransform,
                 borderRadius,
-                boxShadow,
-                backgroundImage: backgroundColor ? 'none' : 'linear-gradient(to bottom, #f2632e, #e93324)',
+                backgroundImage: backgroundColor
+                    ? 'none'
+                    : backgroundImage
+                      ? backgroundImage
+                      : 'linear-gradient(to bottom, #f2632e, #e93324)',
             }}
             className={styles.button}
         >

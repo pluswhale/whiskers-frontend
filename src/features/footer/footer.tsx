@@ -1,4 +1,4 @@
-import { FC, ReactElement } from 'react';
+import { FC, ReactElement, useState } from 'react';
 import { Typography } from '../../shared/components/typography';
 import styles from './footer.module.scss';
 import { Button } from '../../shared/components/button';
@@ -9,8 +9,8 @@ import { Flip, toast } from 'react-toastify';
 import { getTxByBOC, sleep } from '../../contracts/utils';
 import { getHttpEndpoint } from '@orbs-network/ton-access';
 import { useTonConnectUI } from '@tonconnect/ui-react';
-import { toNano, Cell, Dictionary } from "@ton/core";
-import { Address, TonClient } from "@ton/ton";
+import { toNano, Cell, Dictionary } from '@ton/core';
+import { Address, TonClient } from '@ton/ton';
 import { Cell as TonCell, beginCell, Address as TonAddress, StateInit } from 'ton';
 import axios from 'axios';
 import { CONTRACT_ADDRESS, TRACE_API, NETWORK } from '../../contracts/config';
@@ -26,10 +26,15 @@ interface Props {
 
 export const Footer: FC<Props> = ({ points, claimedWhisks, isMobile }): ReactElement => {
     const { userData, isClaimable, airdropList, airdropCell, campaignNumber, updateClaimedWhisks } = useAppContext();
+    const [isClaimButtonAccessible, setIsClaimedButtonAccessible] = useState<boolean>(true);
     const [tonConnectUI] = useTonConnectUI();
     const connected = tonConnectUI.connected;
 
-    const userIndex = airdropList.findIndex((x) => Address.parse(x.userTonAddress).toString() == Address.parse(userData?.userTonAddress || 'UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ').toString())
+    const userIndex = airdropList.findIndex(
+        (x) =>
+            Address.parse(x.userTonAddress).toString() ==
+            Address.parse(userData?.userTonAddress || 'UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ').toString(),
+    );
     let userUnclaimedAmount = 0;
     if (userIndex != -1) {
         userUnclaimedAmount = airdropList[userIndex].unclaimedWhisks;
@@ -44,7 +49,7 @@ export const Footer: FC<Props> = ({ points, claimedWhisks, isMobile }): ReactEle
             if (isDeployed) return;
             await sleep(3000);
         }
-        throw new Error("Timeout");
+        throw new Error('Timeout');
     }
 
     const onClaimWhisks = async () => {
@@ -72,24 +77,26 @@ export const Footer: FC<Props> = ({ points, claimedWhisks, isMobile }): ReactEle
                 theme: 'dark',
                 transition: Flip,
             });
-        }
-        else if (userData?.userId && userData?.userTonAddress && campaignNumber) {
+        } else if (userData?.userId && userData?.userTonAddress && campaignNumber) {
             // check correct wallet address
-            const userIdIndex = airdropList.findIndex(obj => obj.userId.toString() == userData?.userId.toString());
+            const userIdIndex = airdropList.findIndex((obj) => obj.userId.toString() == userData?.userId.toString());
             if (userIdIndex != -1) {
                 const snapshotAddress = airdropList[userIdIndex].userTonAddress.toString();
                 if (snapshotAddress != userData?.userTonAddress.toString()) {
-                    toast.error(`Please connect with previous wallet to claim or wait until next snapshot at 7:00 GMT`, {
-                        position: 'bottom-left',
-                        autoClose: 3000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: 'dark',
-                        transition: Flip,
-                    });
+                    toast.error(
+                        `Please connect with previous wallet to claim or wait until next snapshot at 7:00 GMT`,
+                        {
+                            position: 'bottom-left',
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: 'dark',
+                            transition: Flip,
+                        },
+                    );
                     return;
                 }
             }
@@ -97,10 +104,13 @@ export const Footer: FC<Props> = ({ points, claimedWhisks, isMobile }): ReactEle
             const endpoint = await getHttpEndpoint({ network: NETWORK });
             const client = new TonClient({ endpoint });
 
-            const dictCell = Cell.fromBase64(airdropCell || "");
+            const dictCell = Cell.fromBase64(airdropCell || '');
             const dict = dictCell.beginParse().loadDictDirect(Dictionary.Keys.BigUint(256), airdropEntryValue);
             const index = airdropList.findIndex(
-                obj => Address.parse(obj.userTonAddress).toString() == Address.parse(userData?.userTonAddress.toString()).toString());
+                (obj) =>
+                    Address.parse(obj.userTonAddress).toString() ==
+                    Address.parse(userData?.userTonAddress.toString()).toString(),
+            );
             if (index == -1) {
                 toast.error(`Not in the airdrop list. Please wait for the next snapshot!`, {
                     position: 'bottom-left',
@@ -138,8 +148,8 @@ export const Footer: FC<Props> = ({ points, claimedWhisks, isMobile }): ReactEle
                             index: entryIndex,
                             proofHash: proof.hash(),
                         },
-                        Cell.fromBoc(Buffer.from(airdropHelperHex.hex, 'hex'))[0]
-                    )
+                        Cell.fromBoc(Buffer.from(airdropHelperHex.hex, 'hex'))[0],
+                    ),
                 );
                 const isClaimed = await helper.getClaimed();
                 if (isClaimed) {
@@ -166,9 +176,9 @@ export const Footer: FC<Props> = ({ points, claimedWhisks, isMobile }): ReactEle
                             .storeBuffer(proof.hash())
                             .storeUint(entryIndex, 256)
                             .storeUint(BigInt(campaignNumber), 16)
-                            .endCell()
+                            .endCell(),
                     });
-                    const stateInitCell = new TonCell()
+                    const stateInitCell = new TonCell();
                     stateInit.writeTo(stateInitCell);
                     try {
                         const claimMsgRes = await tonConnectUI.sendTransaction({
@@ -177,8 +187,9 @@ export const Footer: FC<Props> = ({ points, claimedWhisks, isMobile }): ReactEle
                                     address: helper.address.toString(),
                                     amount: toNano('0.1').toString(),
                                     stateInit: stateInitCell.toBoc().toString('base64'),
-                                },],
-                            validUntil: Date.now() + 5 * 60 * 1000, // 5 minutes for user to approve 
+                                },
+                            ],
+                            validUntil: Date.now() + 5 * 60 * 1000, // 5 minutes for user to approve
                         });
                         await waitForContractDeploy(helper.address, client!);
                         await sleep(1500);
@@ -214,6 +225,12 @@ export const Footer: FC<Props> = ({ points, claimedWhisks, isMobile }): ReactEle
                                         theme: 'dark',
                                         transition: Flip,
                                     });
+
+                                    setIsClaimedButtonAccessible(false);
+
+                                    setTimeout(() => {
+                                        setIsClaimedButtonAccessible(true);
+                                    }, 300_000); // 5 mins
                                 }
                             }
                         } catch (err) {
@@ -246,7 +263,7 @@ export const Footer: FC<Props> = ({ points, claimedWhisks, isMobile }): ReactEle
                     }
                 }
                 if (await client.isContractDeployed(helper.address)) {
-                    if (!await helper.getClaimed()) {
+                    if (!(await helper.getClaimed())) {
                         await helper.sendClaim(123n, proof);
                     }
                 }
@@ -277,11 +294,16 @@ export const Footer: FC<Props> = ({ points, claimedWhisks, isMobile }): ReactEle
                             {(points || 0) - (claimedWhisks || 0)}
                         </Typography>
                         <Button
+                            disabled={!isClaimButtonAccessible}
                             onClick={onClaimWhisks}
                             fontFamily={'Montserrat, sans-serif'}
                             height={isMobile ? '24px' : '42px'}
                             fontSize={isMobile ? '16px' : '40px'}
-                            backgroundColor="#0080bb"
+                            backgroundImage={
+                                isClaimButtonAccessible
+                                    ? 'linear-gradient(rgb(32 167 228), rgb(0, 128, 187))'
+                                    : 'linear-gradient(#C0C0C0, #808080)'
+                            }
                             text={'Claim tokens'}
                             fontWeight={'normal'}
                             width={'fit-content'}

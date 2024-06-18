@@ -58,6 +58,10 @@
         }
     }
 
+    &:disabled {
+        cursor: not-allowed;
+    }
+
     &:hover {
         background-image: $linearGradientForButton;
         box-shadow:

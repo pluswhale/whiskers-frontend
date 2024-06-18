@@ -60,7 +60,7 @@ export const TonConnectModal = () => {
                     height={isMobile ? '42px' : '42px'}
                     fontSize={isMobile ? '16px' : '40px'}
                     stylesForTexts={{ main: { whiteSpace: 'pre-wrap' }, sub: {} }}
-                    backgroundColor="#0080bb"
+                    backgroundImage="linear-gradient(rgb(32 167 228), rgb(0, 128, 187))"
                     text={'Connect wallet'}
                     fontWeight={'normal'}
                     width={'fit-content'}

@@ -137,27 +137,28 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
     useEffect(() => {
         const fetchUserData = async () => {
             const userId = tgUser?.id?.toString();
-            // if (userId) {
-            console.log('IM LOGIN REQUEST');
+
+            if (!userId) return;
 
             try {
                 const res = await loginUser(userId || testUserId);
-                if (res) {
+
+                if (res && res?.user) {
                     setUserData(res.user);
+
                     if (uriParams?.tgWebAppStartParam) {
                         await referralUser(res.user.userId, {
-                            referredById: uriParams?.tgWebAppStartParam?.split('#')?.[0],
+                            referredById: uriParams.tgWebAppStartParam.split('#')[0],
                         });
                     }
                 }
             } catch (error) {
                 console.error('Error during login:', error);
             }
-            // }
         };
 
         fetchUserData();
-    }, []); //tgUser?.id, uriParams?.startapp
+    }, [tgUser?.id, uriParams?.startapp]);
 
     useEffect(() => {
         //@ts-ignore
@@ -237,12 +238,13 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
     useEffect(() => {
         if (userData && userData?.lastSpinTime?.length >= 0) {
             const checkSpinTimes = () => {
+                if (!tgUser?.id?.toString()) return;
+
                 const now = new Date();
+
                 userData.lastSpinTime.forEach(async (spinTime) => {
                     if (new Date(spinTime) <= now) {
-                        // if (tgUser?.id?.toString()) {
                         await fetchAndUpdateUserData(tgUser?.id?.toString() || testUserId, setUserData);
-                        // }
                     }
                 });
             };
