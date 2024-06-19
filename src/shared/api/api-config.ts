@@ -6,10 +6,10 @@ const hostBackendUrl = 'https://whisk-wheel-bot-c25a548e192c.herokuapp.com/spin-
 const localBackendUrl = 'http://localhost:4000/spin-and-earn/';
 
 //@ts-ignore
-const dockerBackendUrl = 'http://62.72.45.191:4001/spin-and-earn/';
+const dockerBackendUrl = 'http://spinforwhisk.com:4001/spin-and-earn/';
 
 export const Instance = axios.create({
-    baseURL: localBackendUrl,
+    baseURL: dockerBackendUrl,
     // baseURL: dockerBackendUrl,
     headers: {
         Accept: 'application/json',
