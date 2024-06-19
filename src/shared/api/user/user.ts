@@ -6,6 +6,7 @@ export const userApi = {
     getAirdropList: () => Instance.get(`airdrop`),
     getUserInfoById: (id: string) => Instance.get(`user/${id}`),
     spinWheel: (userId: string, body: SpinWheelBody) => Instance.post(`spin/${userId}`, body),
+    randomSector: (userId: string, isFreeSpin: boolean) => Instance.post(`random-sector/${userId}`, { isFreeSpin }),
     claimWhisks: (userId: string) => Instance.post(`claim-whisks/${userId}`),
     saveUserTonAddress: (userId: string, body: { userTonAddress: string }) =>
         Instance.post(`ton-address/${userId}`, body),

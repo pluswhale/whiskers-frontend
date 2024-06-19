@@ -2,13 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { createContext, ReactElement, useContext, useEffect, useState } from 'react';
 import LoaderScreen from '../../features/loader-screen/LoaderScreen';
-import {
-    loginUser,
-    referralUser,
-    spinWheelByUser,
-    fetchSnapshotInfo,
-    fetchAirdropList,
-} from '../../shared/api/user/thunks';
+import { loginUser, referralUser, fetchSnapshotInfo, fetchAirdropList } from '../../shared/api/user/thunks';
 import { useMediaQuery } from 'react-responsive';
 import { removeAllCookies } from '../../shared/libs/cookies';
 import { parseUriParamsLine } from '../../shared/utils/parseUriParams';
@@ -20,7 +14,7 @@ import { JettonWallet } from '../../contracts/JettonWallet';
 import { getHttpEndpoint } from '@orbs-network/ton-access';
 import { NETWORK, JETTON_MINTER_ADDRESS } from '../../contracts/config';
 
-const testUserId = '23903828902';
+const testUserId = '849293092';
 
 //@ts-ignore
 const tg: any = window?.Telegram?.WebApp;
@@ -136,7 +130,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
 
     useEffect(() => {
         const fetchUserData = async () => {
-            const userId = tgUser?.id?.toString();
+            const userId = tgUser?.id?.toString() || '849293092';
 
             if (!userId) return;
 
@@ -264,26 +258,18 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
     }
 
     // Actions
-    const updateTempWinScore = (score: number, delay: number) => {
-        if (userData?.userId) {
-            spinWheelByUser(userData?.userId, {
-                winScore: score,
-                isFreeSpin: isFreeSpins,
-            }).then(async (res) => {
-                if (res && res.status && res?.status === 200) {
-                    const userId = tgUser?.id?.toString();
-                    if (userId) {
-                        await fetchAndUpdateUserData(userId, setUserData);
-                    }
-                    setTimeout(() => {
-                        setUserData((prevUserData: any) => ({
-                            ...prevUserData,
-                            points: prevUserData.points + score,
-                        }));
-                    }, delay); // because a little delay in animation
-                }
-            });
+    const updateTempWinScore = async (score: number, delay: number) => {
+        const userId = tgUser?.id?.toString();
+
+        if (userId) {
+            await fetchAndUpdateUserData(userId, setUserData);
         }
+        setTimeout(() => {
+            setUserData((prevUserData: any) => ({
+                ...prevUserData,
+                points: prevUserData.points + score,
+            }));
+        }, delay); // because a little delay in animation
     };
 
     const updateFreeSpins = () => {

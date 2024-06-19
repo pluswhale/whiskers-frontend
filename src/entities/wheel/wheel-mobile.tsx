@@ -20,6 +20,7 @@ import { useAudio } from '../../app/providers/AudioProvider';
 import muteMusicImage from '../../assets/images/no-sound.png';
 import enableMusicImage from '../../assets/images/medium-volume.png';
 import fastForwardButton from '../../assets/images/fast-forward-button.png';
+import { getRandomSector } from '../../shared/api/user/thunks';
 
 interface WheelMobileProps {
     isAvailableToSpin: boolean;
@@ -36,7 +37,7 @@ const WinAnimations: { [key in WinAnimation]: any } = {
 };
 
 export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLoggedIn }): ReactElement => {
-    const { isFreeSpins, updateFreeSpins, updateBonusSpins, updateTempWinScore } = useAppContext();
+    const { userData, isFreeSpins, updateFreeSpins, updateBonusSpins, updateTempWinScore } = useAppContext();
     const { startAudio, stopAudio, isPlaying } = useAudio();
     const [isDisplayAnimation, setIsDisplayAnimation] = useState<boolean>(false);
     const [isFastSpinning, setIsFastSpinning] = useState<boolean>(false);
@@ -145,9 +146,11 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
 
             setIsNeedRotateSpinIcon(true);
 
-            if (audioRef.current) {
-                audioRef.current.play();
-            }
+            setTimeout(() => {
+                if (audioRef.current) {
+                    audioRef.current.play();
+                }
+            }, 200);
 
             setTimeout(() => {
                 setIsDisplayAnimation(true);
@@ -155,11 +158,14 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
 
             setTimeout(() => {
                 setIsNeedRotateSpinIcon(false);
+                setIsDisplayAnimation(false);
+                if (audioRef.current) {
+                    audioRef.current.currentTime = 0;
+                    audioRef.current.pause();
+                }
             }, 7000);
 
-            setTimeout(() => {
-                setIsDisplayAnimation(false);
-            }, 7_000);
+            setTimeout(() => {}, 7_000);
         } else {
             toast.error(`Cannot spin it`, {
                 position: 'bottom-left',
@@ -217,15 +223,19 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
         }
     };
 
-    function twistWheel(duration: number, delay: number) {
-        const randomSectorValue = randomSector(delay);
+    const twistWheel = async (duration: number, delay: number) => {
+        const { sector: randomSectorValue, prizeValue } = (
+            await getRandomSector(userData?.userId || '', Boolean(isFreeSpins))
+        ).data;
+
+        updateTempWinScore(prizeValue, delay);
+        setWinAnimation(prizeValue);
 
         const randomSectorCenter = -(oneSectorAngle * ((randomSectorValue as number) + 0.5)).toFixed(4);
 
         if (spinCountRef.current) beginTwistAngleRef.current = winAngleRef.current;
 
         spinCountRef.current++;
-
         winAngleRef.current = randomSectorCenter;
 
         if (winAngleRef.current >= 1) winAngleRef.current--;
@@ -235,21 +245,23 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
             duration: duration,
             timing: timing,
         });
-    }
+    };
 
     //get random sector according to sectors probabilities
-    function randomSector(delay: number) {
-        const randomNumber = Math.floor(Math.random() * 360) + 1; // 1...360
+    // function randomSector(delay: number) {
+    //     const randomNumber = Math.floor(Math.random() * 360) + 1; // 1...360
 
-        for (let i = 0, upperBorder = 0; i < sectorsData?.length; i++) {
-            upperBorder += sectorsData?.[i]?.probability as number;
-            if (randomNumber < upperBorder) {
-                setWinAnimation(sectorsData?.[i]?.value as WinAnimation);
-                updateTempWinScore(sectorsData?.[i]?.value, delay); // add score setter and make request here
-                return i;
-            }
-        }
-    }
+    //     for (let i = 0, upperBorder = 0; i < sectorsData?.length; i++) {
+    //         upperBorder += sectorsData?.[i]?.probability as number;
+    //         console.log('ub', upperBorder);
+
+    //         if (randomNumber < upperBorder) {
+    //             setWinAnimation(sectorsData?.[i]?.value as WinAnimation);
+    //             updateTempWinScore(sectorsData?.[i]?.value, delay); // add score setter and make request here
+    //             return i;
+    //         }
+    //     }
+    // }
 
     function animate({ timing, duration }: { timing: (fraction: number) => number; duration: number }) {
         const start = performance.now();

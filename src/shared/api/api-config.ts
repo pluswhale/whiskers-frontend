@@ -9,7 +9,7 @@ const localBackendUrl = 'http://localhost:4000/spin-and-earn/';
 const dockerBackendUrl = 'http://62.72.45.191:4001/spin-and-earn/';
 
 export const Instance = axios.create({
-    baseURL: dockerBackendUrl,
+    baseURL: localBackendUrl,
     // baseURL: dockerBackendUrl,
     headers: {
         Accept: 'application/json',

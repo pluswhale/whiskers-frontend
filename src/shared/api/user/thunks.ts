@@ -51,6 +51,15 @@ export const referralUser = async (referredUserId: string, body: ReferralBody) =
     }
 };
 
+export const getRandomSector = async (userId: string, isFreeSpin: boolean) => {
+    try {
+        const res = await userApi.randomSector(userId, isFreeSpin);
+        return res.data;
+    } catch (err) {
+        console.error(err);
+    }
+};
+
 export const saveUserTonAddress = async (userId: string, body: { userTonAddress: string }) => {
     try {
         const res = await userApi.saveUserTonAddress(userId, body);
@@ -86,3 +95,4 @@ export const fetchAirdropList = async () => {
         console.error(err);
     }
 };
+
