@@ -130,7 +130,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
 
     useEffect(() => {
         const fetchUserData = async () => {
-            const userId = tgUser?.id?.toString() || '849293092';
+            const userId = tgUser?.id?.toString();
 
             if (!userId) return;
 
