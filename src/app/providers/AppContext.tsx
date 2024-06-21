@@ -64,12 +64,15 @@ interface AppContextType {
 }
 
 const fetchAndUpdateUserData = async (userId: string, setUserData: (user: UserData) => void) => {
+    console.log(userId);
+    
     try {
         const res = await loginUser(userId); // Adjust the endpoint and method as needed
+        
         if (res) {
             //@ts-ignore
             setUserData((prev: UserData): UserData => {
-                return { ...prev, lastSpinTime: res?.user?.lastSpinTime };
+                return { ...prev, lastSpinTime: res?.user?.lastSpinTime, spinsAvailable: res?.user?.spinsAvailable };
             });
             // Assume the backend handles spin recharging
         }
@@ -130,7 +133,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
 
     useEffect(() => {
         const fetchUserData = async () => {
-            const userId = tgUser?.id?.toString();
+            const userId = tgUser?.id?.toString() || testUserId;
 
             if (!userId) return;
 
@@ -232,8 +235,8 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
     useEffect(() => {
         if (userData && userData?.lastSpinTime?.length >= 0) {
             const checkSpinTimes = () => {
-                if (!tgUser?.id?.toString()) return;
-
+                // if (!tgUser?.id?.toString() && !testUserId) return;
+                
                 const now = new Date();
 
                 userData.lastSpinTime.forEach(async (spinTime) => {
@@ -259,7 +262,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
 
     // Actions
     const updateTempWinScore = async (score: number, delay: number) => {
-        const userId = tgUser?.id?.toString();
+        const userId = tgUser?.id?.toString() || testUserId;
 
         if (userId) {
             await fetchAndUpdateUserData(userId, setUserData);
