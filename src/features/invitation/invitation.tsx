@@ -12,7 +12,7 @@ interface Props {
 }
 
 const REF_TEXT = `Earn $WHISK daily for free by spinning the wheel 🤑🚀! Use my invite link and spin twice to give me 3 bonus spins 🤍👇`;
-const WHISK_BOT_NAME = 'spinearnbot/spinandearn';
+const WHISK_BOT_NAME = 'whiskervpsbot/whiskvps';
 
 export const Invitation: FC<Props> = ({ isMobile, userData }): ReactElement => {
     /*
@@ -66,7 +66,7 @@ export const Invitation: FC<Props> = ({ isMobile, userData }): ReactElement => {
     const handleClick = () => {
         const refLink = `https://t.me/share/url?text=%0A${REF_TEXT}&url=https://t.me/${WHISK_BOT_NAME}?startapp=${userData?.userId}`;
         window.location.href = refLink;
-    }
+    };
 
     return (
         <div className={styles.app__invitation}>
