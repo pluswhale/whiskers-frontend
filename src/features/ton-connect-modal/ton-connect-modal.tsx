@@ -14,7 +14,7 @@ function shortAddress(address: string): string {
 }
 
 export const TonConnectModal = () => {
-    const { isMobile } = useAppContext();
+    const { isMobile, updateTonAddress } = useAppContext();
 
     const { userFriendlyAddress, open } = useTonConnect();
     // const wallet = useTonWallet();
@@ -33,6 +33,7 @@ export const TonConnectModal = () => {
     useEffect(() => {
         if (userData && userData.userTonAddress !== userFriendlyAddress && userFriendlyAddress && userData?.userId) {
             saveUserTonAddress(userData?.userId, { userTonAddress: userFriendlyAddress });
+            updateTonAddress(userFriendlyAddress);
         }
     }, [userData, userFriendlyAddress]);
 

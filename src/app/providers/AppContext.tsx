@@ -56,6 +56,7 @@ interface AppContextType {
     updateBonusSpins: (countSpins?: number) => void;
     updateTempWinScore: (score: number, delay: number) => void;
     updateClaimedWhisks: () => void;
+    updateTonAddress: (address: string) => void;
     jettonBalance: number;
     isClaimable: number | null;
     airdropCell: string | null;
@@ -65,10 +66,10 @@ interface AppContextType {
 
 const fetchAndUpdateUserData = async (userId: string, setUserData: (user: UserData) => void) => {
     console.log(userId);
-    
+
     try {
         const res = await loginUser(userId); // Adjust the endpoint and method as needed
-        
+
         if (res) {
             //@ts-ignore
             setUserData((prev: UserData): UserData => {
@@ -235,8 +236,6 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
     useEffect(() => {
         if (userData && userData?.lastSpinTime?.length >= 0) {
             const checkSpinTimes = () => {
-                // if (!tgUser?.id?.toString() && !testUserId) return;
-                
                 const now = new Date();
 
                 userData.lastSpinTime.forEach(async (spinTime) => {
@@ -273,6 +272,13 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
                 points: prevUserData.points + score,
             }));
         }, delay); // because a little delay in animation
+    };
+
+    const updateTonAddress = async (address: string) => {
+        setUserData((prevUserData: any) => ({
+            ...prevUserData,
+            userTonAddress: address,
+        }));
     };
 
     const updateFreeSpins = () => {
@@ -338,6 +344,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
                 updateFreeSpins,
                 updateBonusSpins,
                 updateClaimedWhisks,
+                updateTonAddress,
                 jettonBalance,
                 isClaimable,
                 airdropCell,
