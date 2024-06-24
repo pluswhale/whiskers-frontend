@@ -5,7 +5,7 @@ export function getTimeLeftFromTimestamp(timestamp: string): string {
     }
 
     const now = new Date();
-    const targetTime = new Date(new Date(timestamp).getTime() + 2 * 60 * 1000); // Adjusted target time
+    const targetTime = new Date(new Date(timestamp).getTime() + 6 * 60 * 60 * 1000); // Adjusted target time
 
     const timeDiff = targetTime.getTime() - now.getTime();
 
