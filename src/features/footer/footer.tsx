@@ -195,11 +195,10 @@ export const Footer: FC<Props> = ({ points, claimedWhisks, isMobile }): ReactEle
                         await sleep(1500);
                         await helper.sendClaim(123n, proof);
 
-                        const exBoc = claimMsgRes.boc;
-                        const txHash = await getTxByBOC(Address.parse(userData?.userTonAddress), exBoc);
-
                         // await sleep(15000); // wait for 15 more seconds
                         try {
+                            const exBoc = claimMsgRes.boc;
+                            const txHash = await getTxByBOC(Address.parse(userData?.userTonAddress), exBoc);
                             const url = `${TRACE_API}${txHash}`;
                             const tonapiRes = await axios.get(url);
                             const txStatus = tonapiRes.data.children[0].transaction.success;
