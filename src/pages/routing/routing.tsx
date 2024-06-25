@@ -13,11 +13,12 @@ export const Routing: FC = (): ReactElement => {
         <Suspense fallback={<LoaderScreen />}>
             <BrowserRouter>
                 <Routes>
-                    <Route path="/whiskers" element={<MainPage />} />
-                    <Route path="/whiskers/buy" element={<BuyPage />} />
+                    <Route path="/whiskers-frontend" element={<MainPage />} />
+                    <Route path="/whiskers-frontend/buy" element={<BuyPage />} />
                     <Route path="*" element={<div>Not found</div>} />
                 </Routes>
             </BrowserRouter>
         </Suspense>
     );
 };
+
