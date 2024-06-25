@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 //@ts-ignore
-const hostBackendUrl = 'https://whisk-wheel-bot-c25a548e192c.herokuapp.com/spin-and-earn/';
+const hostBackendUrl = 'https://whiskers-be-20342f5553a6.herokuapp.com/spin-and-earn/';
 //@ts-ignore
 const localBackendUrl = 'http://localhost:4000/spin-and-earn/';
 
@@ -9,7 +9,7 @@ const localBackendUrl = 'http://localhost:4000/spin-and-earn/';
 const dockerBackendUrl = 'https://spinforwhisk.com/backend/spin-and-earn/';
 
 export const Instance = axios.create({
-    baseURL: dockerBackendUrl,
+    baseURL: hostBackendUrl,
     // baseURL: dockerBackendUrl,
     headers: {
         Accept: 'application/json',
