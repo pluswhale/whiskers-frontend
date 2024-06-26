@@ -1,6 +1,9 @@
 .app {
     &__invitation {
-        padding: 10px 30px 100px;
+        padding: 20px 10px 100px;
+        display: flex;
+        justify-content: center;
+        gap: 12px;
 
         @media (min-width: 600px) {
             width: 60%;

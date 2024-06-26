@@ -1,10 +1,11 @@
 import { FC, ReactElement } from 'react';
-import { Button } from '../../shared/components/button';
-import giftIcon from '../../assets/images/gift_icon.png';
+// import { Button } from '../../shared/components/button';
+// import giftIcon from '../../assets/images/gift_icon.png';
 
 import styles from './invitation.module.scss';
 // import { Flip, toast } from 'react-toastify';
 import { UserData } from '../../app/providers/AppContext';
+import { ActionButton } from '../../shared/components/action-button/ActionButton';
 
 interface Props {
     isMobile: boolean;
@@ -70,7 +71,7 @@ export const Invitation: FC<Props> = ({ isMobile, userData }): ReactElement => {
 
     return (
         <div className={styles.app__invitation}>
-            <Button
+            {/* <Button
                 // onClick={copyToClipboard}
                 onClick={handleClick}
                 imageLeft={giftIcon}
@@ -85,7 +86,49 @@ export const Invitation: FC<Props> = ({ isMobile, userData }): ReactElement => {
                     main: { fontSize: isMobile ? '24px' : '42px', fontWeight: 'bold' },
                     sub: { fontSize: isMobile ? '18px' : '32px', fontWeight: 'normal' },
                 }}
-            />
+            /> */}
+            <ActionButton
+                onClick={handleClick}
+                fontFamily={'Montserrat, sans-serif'}
+                height={isMobile ? '65px' : '200px'}
+                textTransform={'none'}
+                text={'Invite'}
+                subText={'Get 3 spins'}
+                fontWeight={'bolder'}
+                borderRadius={'12px'}
+                stylesForTexts={{
+                    main: { fontSize: isMobile ? '18px' : '42px', fontWeight: 'bold' },
+                    sub: { fontSize: isMobile ? '16px' : '32px', fontWeight: 'normal' },
+                }}
+             />
+             <ActionButton
+                onClick={handleClick}
+                fontFamily={'Montserrat, sans-serif'}
+                height={isMobile ? '65px' : '200px'}
+                textTransform={'none'}
+                text={'Level'}
+                subText={'1'}
+                fontWeight={'bolder'}
+                borderRadius={'12px'}
+                stylesForTexts={{
+                    main: { fontSize: isMobile ? '18px' : '42px', fontWeight: 'bold' },
+                    sub: { fontSize: isMobile ? '16px' : '32px', fontWeight: 'normal' },
+                }}
+             />
+             <ActionButton
+                onClick={handleClick}
+                fontFamily={'Montserrat, sans-serif'}
+                height={isMobile ? '65px' : '200px'}
+                textTransform={'none'}
+                text={'Tasks'}
+                subText={'Earn WHISK'}
+                fontWeight={'bolder'}
+                borderRadius={'12px'}
+                stylesForTexts={{
+                    main: { fontSize: isMobile ? '18px' : '42px', fontWeight: 'bold' },
+                    sub: { fontSize: isMobile ? '16px' : '32px', fontWeight: 'normal' },
+                }}
+             />
         </div>
     );
 };
