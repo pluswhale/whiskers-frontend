@@ -9,6 +9,7 @@ interface TypographyProps {
     className?: string;
     fontFamily?: string;
     fontSize?: string;
+    fontWeight?: string;
     children: React.ReactNode;
 }
 
@@ -20,6 +21,7 @@ export const Typography: React.FC<TypographyProps> = ({
     children,
     fontFamily = "'Montserrat', sans-serif",
     fontSize = '16px',
+    fontWeight = 'normal',
     ...props
 }) => {
     const Component = variant === 'caption' || variant === 'overline' ? 'span' : 'p';
@@ -30,6 +32,7 @@ export const Typography: React.FC<TypographyProps> = ({
         fontFamily: fontFamily,
         fontSize,
         lineHeight: fontSize,
+        fontWeight
     };
 
     return (

@@ -11,12 +11,14 @@ type Props = {
   backgroundColor?: string;
   fontWeight?: string;
   imageLeft?: string;
-  imageRight?: string;
+  textRight?: string;
+  subTextRight?: string;
   backgroundImage?: string;
   width?: string;
   textTransform?: any;
   borderRadius?: string;
   stylesForTexts?: { main: CSSProperties; sub: CSSProperties };
+  stylesForTextsRight?: { main: CSSProperties; sub: CSSProperties };
   onClick?: () => void;
   disabled?: boolean;
 };
@@ -25,6 +27,9 @@ export const ActionButton: FC<Props> = (props): ReactElement => {
   const {
       text,
       subText,
+      imageLeft,
+      textRight,
+      subTextRight,
       fontSize = '16px',
       height = '',
       fontFamily,
@@ -35,6 +40,7 @@ export const ActionButton: FC<Props> = (props): ReactElement => {
       textTransform = 'uppercase',
       borderRadius,
       stylesForTexts,
+      stylesForTextsRight,
       disabled,
       onClick,
   } = props;
@@ -60,15 +66,19 @@ export const ActionButton: FC<Props> = (props): ReactElement => {
           }}
           className={styles.button}
       >
-          <div className={styles.button__text_conteiner}>
-              <span style={stylesForTexts?.main || {}} className={styles.button__text_conteiner__text}>
-                  {text}
-              </span>
-              <span style={stylesForTexts?.sub || {}} className={styles.button__text_conteiner__subtext}>
-                  {subText}
-              </span>
-          </div>
+        {imageLeft && <img className={`${styles.button__icon_left}`} src={imageLeft} />}
+        <div className={styles.button__text_conteiner}>
+            <span style={stylesForTexts?.main || {}} className={styles.button__text_conteiner__text}>
+                {text}
+            </span>
+            <span style={stylesForTexts?.sub || {}} className={styles.button__text_conteiner__subtext}>
+                {subText}
+            </span>
+        </div>
+        <div>
+          {textRight && <p style={stylesForTextsRight?.main}>{textRight}</p>}
+          {subTextRight && <p style={stylesForTextsRight?.sub}>{subTextRight}</p>}
+        </div>
       </button>
   );
 };
-
