@@ -10,13 +10,14 @@ type Props = {
   boxShadow?: string;
   backgroundColor?: string;
   fontWeight?: string;
-  imageLeft?: string;
+  imageLeft?: any;
   textRight?: string;
   subTextRight?: string;
   backgroundImage?: string;
   width?: string;
   textTransform?: any;
   borderRadius?: string;
+  gap?: string;
   stylesForTexts?: { main: CSSProperties; sub: CSSProperties };
   stylesForTextsRight?: { main: CSSProperties; sub: CSSProperties };
   onClick?: () => void;
@@ -39,6 +40,7 @@ export const ActionButton: FC<Props> = (props): ReactElement => {
       width = '100%',
       textTransform = 'uppercase',
       borderRadius,
+      gap,
       stylesForTexts,
       stylesForTextsRight,
       disabled,
@@ -58,6 +60,7 @@ export const ActionButton: FC<Props> = (props): ReactElement => {
               width,
               textTransform,
               borderRadius,
+              gap,
               backgroundImage: backgroundColor
                   ? 'none'
                   : backgroundImage
@@ -66,7 +69,8 @@ export const ActionButton: FC<Props> = (props): ReactElement => {
           }}
           className={styles.button}
       >
-        {imageLeft && <img className={`${styles.button__icon_left}`} src={imageLeft} />}
+        {/* {imageLeft && <img className={`${styles.button__icon_left}`} src={imageLeft} />} */}
+        {imageLeft}
         <div className={styles.button__text_conteiner}>
             <span style={stylesForTexts?.main || {}} className={styles.button__text_conteiner__text}>
                 {text}

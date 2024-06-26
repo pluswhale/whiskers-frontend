@@ -12,8 +12,8 @@ interface Props {
     userData: UserData | null;
 }
 
-const REF_TEXT = `Earn $WHISK daily for free by spinning the wheel 🤑🚀! Use my invite link and spin twice to give me 3 bonus spins 🤍👇`;
-const WHISK_BOT_NAME = 'spinearnbot/spinandearn';
+export const REF_TEXT = `Earn $WHISK daily for free by spinning the wheel 🤑🚀! Use my invite link and spin twice to give me 3 bonus spins 🤍👇`;
+export const WHISK_BOT_NAME = 'spinearnbot/spinandearn';
 
 export const Invitation: FC<Props> = ({ isMobile, userData }): ReactElement => {
     /*
@@ -64,31 +64,19 @@ export const Invitation: FC<Props> = ({ isMobile, userData }): ReactElement => {
     };
     */
 
-    const handleClick = () => {
+    const handleInvitation = () => {
         const refLink = `https://t.me/share/url?text=%0A${REF_TEXT}&url=https://t.me/${WHISK_BOT_NAME}?startapp=${userData?.userId}`;
         window.location.href = refLink;
     };
 
+    const handleLevels = () => {
+        window.location.href = '/whiskers-frontend/levels'
+    }
+
     return (
         <div className={styles.app__invitation}>
-            {/* <Button
-                // onClick={copyToClipboard}
-                onClick={handleClick}
-                imageLeft={giftIcon}
-                fontFamily={'Montserrat, sans-serif'}
-                height={isMobile ? '65px' : '200px'}
-                textTransform={'none'}
-                text={'Refer A Friend'}
-                subText={'Get 3 bonus spins'}
-                fontWeight={'bolder'}
-                borderRadius={'12px'}
-                stylesForTexts={{
-                    main: { fontSize: isMobile ? '24px' : '42px', fontWeight: 'bold' },
-                    sub: { fontSize: isMobile ? '18px' : '32px', fontWeight: 'normal' },
-                }}
-            /> */}
             <ActionButton
-                onClick={handleClick}
+                onClick={handleInvitation}
                 fontFamily={'Montserrat, sans-serif'}
                 height={isMobile ? '65px' : '200px'}
                 textTransform={'none'}
@@ -102,7 +90,7 @@ export const Invitation: FC<Props> = ({ isMobile, userData }): ReactElement => {
                 }}
              />
              <ActionButton
-                onClick={handleClick}
+                onClick={handleLevels}
                 fontFamily={'Montserrat, sans-serif'}
                 height={isMobile ? '65px' : '200px'}
                 textTransform={'none'}
@@ -116,7 +104,7 @@ export const Invitation: FC<Props> = ({ isMobile, userData }): ReactElement => {
                 }}
              />
              <ActionButton
-                onClick={handleClick}
+                onClick={handleInvitation}
                 fontFamily={'Montserrat, sans-serif'}
                 height={isMobile ? '65px' : '200px'}
                 textTransform={'none'}

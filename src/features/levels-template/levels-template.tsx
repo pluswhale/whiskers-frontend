@@ -10,10 +10,9 @@ import { LEVEL_ROWS_DATA } from "./constants";
 // import { Button } from "../../shared/components/button";
 import { ActionButton } from "../../shared/components/action-button";
 import backIcon from '../../assets/images/back-arrow.png';
+import { REF_TEXT, WHISK_BOT_NAME } from "../invitation/invitation";
+import { Icon } from "../../shared/components/icon";
 // import { TonConnectModal } from '../ton-connect-modal/ton-connect-modal';
-
-const REF_TEXT = `Earn $WHISK daily for free by spinning the wheel 🤑🚀! Use my invite link and spin twice to give me 3 bonus spins 🤍👇`;
-const WHISK_BOT_NAME = 'spinearnbot/spinandearn';
 
 export const LevelsTemplate: FC = (): ReactElement => {
   const navigate = useNavigate();
@@ -60,7 +59,7 @@ export const LevelsTemplate: FC = (): ReactElement => {
               <ActionButton
                 key={index}
                 onClick={onInvitation}
-                imageLeft={`/whiskers-frontend/src/assets/images/circle-${index+1}.png`}
+                imageLeft={<Icon style={{width: '25px', height: '25px', flexShrink: 0}} src={`/whiskers-frontend/src/assets/images/circle-${index+1}.png`} />}
                 textRight={referralsMax ? `${referralsMin}-${referralsMax}`: `${referralsMin}+`}
                 subTextRight={'referrals'}
                 fontFamily={'Montserrat, sans-serif'}
@@ -70,6 +69,7 @@ export const LevelsTemplate: FC = (): ReactElement => {
                 subText={`${freeSpinLimit} free spins limit`}
                 fontWeight={'bolder'}
                 borderRadius={'12px'}
+                gap={'10px'}
                 stylesForTexts={{
                   main: { fontSize: isMobile ? '18px' : '42px', fontWeight: 'bold', textAlign: 'left' },
                   sub: { fontSize: isMobile ? '14px' : '32px', fontWeight: 'normal', textAlign: 'left' },
