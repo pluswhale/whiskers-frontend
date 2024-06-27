@@ -14,6 +14,7 @@ import { JettonWallet } from '../../contracts/JettonWallet';
 import { getHttpEndpoint } from '@orbs-network/ton-access';
 import { NETWORK, JETTON_MINTER_ADDRESS } from '../../contracts/config';
 
+//@ts-ignore
 const testUserId = '849293092';
 
 //@ts-ignore
@@ -134,12 +135,12 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
 
     useEffect(() => {
         const fetchUserData = async () => {
-            const userId = tgUser?.id?.toString() || testUserId;
+            const userId = tgUser?.id?.toString();
 
             if (!userId) return;
 
             try {
-                const res = await loginUser(userId || testUserId);
+                const res = await loginUser(userId);
 
                 if (res && res?.user) {
                     setUserData(res.user);
@@ -240,7 +241,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
 
                 userData.lastSpinTime.forEach(async (spinTime) => {
                     if (new Date(spinTime) <= now) {
-                        await fetchAndUpdateUserData(tgUser?.id?.toString() || testUserId, setUserData);
+                        if (tgUser?.id?.toString()) await fetchAndUpdateUserData(tgUser?.id?.toString(), setUserData);
                     }
                 });
             };
@@ -261,7 +262,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
 
     // Actions
     const updateTempWinScore = async (score: number, delay: number) => {
-        const userId = tgUser?.id?.toString() || testUserId;
+        const userId = tgUser?.id?.toString();
 
         if (userId) {
             await fetchAndUpdateUserData(userId, setUserData);
