@@ -7,18 +7,15 @@ import { useAppContext } from "../../app/providers/AppContext";
 import { Logo } from "../../shared/components/logo";
 import { Heading } from "../../shared/components/heading";
 import { LEVEL_ROWS_DATA } from "./constants";
-// import { Button } from "../../shared/components/button";
 import { ActionButton } from "../../shared/components/action-button";
 import backIcon from '../../assets/images/back-arrow.png';
 import { REF_TEXT, WHISK_BOT_NAME } from "../invitation/invitation";
 import { Icon } from "../../shared/components/icon";
-// import { TonConnectModal } from '../ton-connect-modal/ton-connect-modal';
 
 export const LevelsTemplate: FC = (): ReactElement => {
   const navigate = useNavigate();
   const isMobile = useMediaQuery({ query: '(max-width: 600px)' });
   const { userData } = useAppContext();
-  // const [isClaimButtonAccessible, setIsClaimedButtonAccessible] = useState<boolean>(true);
   
   const onNavigateToMainScreen = () => {
     navigate(-1);
@@ -75,7 +72,7 @@ export const LevelsTemplate: FC = (): ReactElement => {
                   sub: { fontSize: isMobile ? '14px' : '32px', fontWeight: 'normal', textAlign: 'left' },
                 }}
                 stylesForTextsRight={{
-                  main: { fontSize: isMobile ? '24px' : '42px', fontWeight: 'bold' },
+                  main: { fontSize: isMobile ? '24px' : '42px', fontWeight: 'bold', fontFamily: "Roundy Rainbows, sans-serif" },
                   sub: { fontSize: isMobile ? '14px' : '32px', fontWeight: 'normal' },
                 }}
               />
@@ -87,40 +84,6 @@ export const LevelsTemplate: FC = (): ReactElement => {
             <Typography>Back</Typography>
           </div>
         </div>
-        {/* <div className={styles.buy__footer_connect}>
-          <div className={styles.buy__footer_connect_container}>
-            <div className={styles.buy__footer_connect_score}>
-              <Typography fontSize={isMobile ? '18px' : '40px'}>Unclaimed WHISK</Typography>
-              <div className={styles.buy__footer_connect_tokens}>
-                <Typography
-                  fontSize={isMobile ? '30px' : '50px'}
-                  fontFamily="Roundy Rainbows, sans-serif"
-                >
-                  {(userData?.points || 0) - (userData?.claimedWhisks || 0)}
-                </Typography>
-                <Button
-                  onClick={onInvitation}
-                  fontFamily={'Montserrat, sans-serif'}
-                  height={isMobile ? '24px' : '42px'}
-                  fontSize={isMobile ? '16px' : '40px'}
-                  backgroundImage={
-                    isClaimButtonAccessible
-                      ? 'linear-gradient(rgb(32 167 228), rgb(0, 128, 187))'
-                      : 'linear-gradient(#C0C0C0, #808080)'
-                  }
-                  text={'Claim tokens'}
-                  fontWeight={'normal'}
-                  width={'fit-content'}
-                  textTransform={'none'}
-                  borderRadius="24px"
-                />
-              </div>
-            </div>
-            <div className={styles.buy__footer_connect_wallet}>
-              <TonConnectModal />
-            </div>
-          </div>
-        </div> */}
       </div>
     </div>
   )

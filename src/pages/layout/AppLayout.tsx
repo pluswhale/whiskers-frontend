@@ -1,12 +1,20 @@
 import { FC } from 'react';
 import { Outlet } from 'react-router-dom';
-import { AudioProvider } from '../../app/providers/AudioProvider';
+import { Footer } from '../../features/footer/footer';
+import { useAppContext } from '../../app/providers/AppContext';
 
 export const AppLayout: FC = () => {
+    const { userData, isMobile } = useAppContext();
+
     return (
-        <AudioProvider>
+        <>
             <Outlet />
-        </AudioProvider>
+            <Footer 
+                isMobile={isMobile} 
+                points={userData?.points} 
+                claimedWhisks={userData?.claimedWhisks} 
+            />
+        </>
     );
 };
 
