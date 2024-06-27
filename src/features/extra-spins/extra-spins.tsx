@@ -56,7 +56,7 @@ export const ExtraSpins: FC<Props> = ({ userData, isMobile }): ReactElement => {
                     </Typography>
 
                     {/*@ts-ignore */}
-                    {userData?.spinsAvailable < 2 ? (
+                    {userData?.spinsAvailable < userData?.level + 1 ? (
                         <div className={styles.app__extra_spins__free_spin__recharge}>
                             <img
                                 ref={timeIconRef}

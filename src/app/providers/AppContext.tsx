@@ -27,6 +27,7 @@ export interface UserData {
     referredUsers: any[];
     spinsAvailable: number;
     points: number;
+    level: number;
     claimedWhisks: number;
     userTonAddress: string;
     updatedAt: string;
@@ -234,7 +235,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
     }, []);
 
     useEffect(() => {
-        if (userData && userData?.lastSpinTime?.length >= 0) {
+        if (userData && userData?.lastSpinTime?.length > 0) {
             const checkSpinTimes = () => {
                 const now = new Date();
 
