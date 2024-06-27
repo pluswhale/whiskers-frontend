@@ -1,3 +1,6 @@
+const SIX_HOURS = 6 * 60 * 60 * 1000;
+const ONE_MINS = 1 * 60 * 1000;
+
 export function getTimeLeftFromTimestamp(timestamp: string): string {
     console.log('timestamp', timestamp);
     if (timestamp == '') {
@@ -5,7 +8,7 @@ export function getTimeLeftFromTimestamp(timestamp: string): string {
     }
 
     const now = new Date();
-    const targetTime = new Date(new Date(timestamp).getTime() + 6 * 60 * 60 * 1000); // Adjusted target time
+    const targetTime = new Date(new Date(timestamp).getTime() + ONE_MINS); // Adjusted target time
 
     const timeDiff = targetTime.getTime() - now.getTime();
 
@@ -29,3 +32,4 @@ export function getTimeLeftFromTimestamp(timestamp: string): string {
         return `${seconds} second${seconds !== 1 ? 's' : ''}`;
     }
 }
+
