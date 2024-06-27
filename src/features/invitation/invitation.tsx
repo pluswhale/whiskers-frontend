@@ -25,6 +25,10 @@ export const Invitation: FC<Props> = ({ isMobile, userData }): ReactElement => {
         navigate('/whiskers-frontend/levels')
     }
 
+    const onNavigateToTasks = () => {
+        navigate('/whiskers-frontend/tasks')
+    }
+
     return (
         <div className={styles.app__invitation}>
             <ActionButton
@@ -56,7 +60,7 @@ export const Invitation: FC<Props> = ({ isMobile, userData }): ReactElement => {
                 }}
              />
              <ActionButton
-                onClick={handleInvitation}
+                onClick={onNavigateToTasks}
                 fontFamily={'Montserrat, sans-serif'}
                 height={isMobile ? '65px' : '200px'}
                 textTransform={'none'}

@@ -2,7 +2,6 @@ import { FC, ReactElement } from "react";
 import { Typography } from "../../shared/components/typography";
 import styles from './levels-template.module.scss';
 import { useNavigate } from "react-router-dom";
-import { useMediaQuery } from "react-responsive";
 import { useAppContext } from "../../app/providers/AppContext";
 import { Logo } from "../../shared/components/logo";
 import { Heading } from "../../shared/components/heading";
@@ -14,8 +13,7 @@ import { Icon } from "../../shared/components/icon";
 
 export const LevelsTemplate: FC = (): ReactElement => {
   const navigate = useNavigate();
-  const isMobile = useMediaQuery({ query: '(max-width: 600px)' });
-  const { userData } = useAppContext();
+  const { userData, isMobile } = useAppContext();
   
   const onNavigateToMainScreen = () => {
     navigate(-1);

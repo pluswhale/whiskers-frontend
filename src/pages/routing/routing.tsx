@@ -7,6 +7,7 @@ import { AppLayout } from '../layout/AppLayout';
 const BuyPage = React.lazy(() => import('../buy/buy'));
 const MainPage = React.lazy(() => import('../main/main'));
 const LevelsPage = React.lazy(() => import('../levels/levels'));
+const TasksPage = React.lazy(() => import('../tasks/tasks'));
 
 export const Routing: FC = (): ReactElement => {
     return (
@@ -17,6 +18,7 @@ export const Routing: FC = (): ReactElement => {
                         <Route path="/whiskers-frontend" element={<MainPage />} />
                         <Route path="/whiskers-frontend/buy" element={<BuyPage />} />
                         <Route path="/whiskers-frontend/levels" element={<LevelsPage />} />
+                        <Route path="/whiskers-frontend/tasks" element={<TasksPage />} />
                     </Route>
                     <Route path="*" element={<div>Not found</div>} />
                 </Routes>
