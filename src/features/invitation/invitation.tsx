@@ -10,10 +10,9 @@ interface Props {
 }
 
 export const REF_TEXT = `Earn $WHISK daily for free by spinning the wheel 🤑🚀! Use my invite link and spin twice to give me 3 bonus spins 🤍👇`;
-export const WHISK_BOT_NAME = 'spinearnbot/spinandearn';
+export const WHISK_BOT_NAME = 'testWhiskers_bot/testwhisk';
 
 export const Invitation: FC<Props> = ({ isMobile, userData }): ReactElement => {
-
     const navigate = useNavigate();
 
     const handleInvitation = () => {
@@ -22,12 +21,12 @@ export const Invitation: FC<Props> = ({ isMobile, userData }): ReactElement => {
     };
 
     const onNavigateToLevels = () => {
-        navigate('/whiskers-frontend/levels')
-    }
+        navigate('/whiskers-frontend/levels');
+    };
 
     const onNavigateToTasks = () => {
-        navigate('/whiskers-frontend/tasks')
-    }
+        navigate('/whiskers-frontend/tasks');
+    };
 
     return (
         <div className={styles.app__invitation}>
@@ -44,8 +43,8 @@ export const Invitation: FC<Props> = ({ isMobile, userData }): ReactElement => {
                     main: { fontSize: isMobile ? '18px' : '42px', fontWeight: 'bold' },
                     sub: { fontSize: isMobile ? '16px' : '32px', fontWeight: 'normal' },
                 }}
-             />
-             <ActionButton
+            />
+            <ActionButton
                 onClick={onNavigateToLevels}
                 fontFamily={'Montserrat, sans-serif'}
                 height={isMobile ? '65px' : '200px'}
@@ -58,8 +57,8 @@ export const Invitation: FC<Props> = ({ isMobile, userData }): ReactElement => {
                     main: { fontSize: isMobile ? '18px' : '42px', fontWeight: 'bold' },
                     sub: { fontSize: isMobile ? '16px' : '32px', fontWeight: 'normal' },
                 }}
-             />
-             <ActionButton
+            />
+            <ActionButton
                 onClick={onNavigateToTasks}
                 fontFamily={'Montserrat, sans-serif'}
                 height={isMobile ? '65px' : '200px'}
@@ -72,7 +71,7 @@ export const Invitation: FC<Props> = ({ isMobile, userData }): ReactElement => {
                     main: { fontSize: isMobile ? '18px' : '42px', fontWeight: 'bold' },
                     sub: { fontSize: isMobile ? '16px' : '32px', fontWeight: 'normal' },
                 }}
-             />
+            />
         </div>
     );
 };

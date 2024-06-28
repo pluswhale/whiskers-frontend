@@ -14,6 +14,7 @@ import { JettonWallet } from '../../contracts/JettonWallet';
 import { getHttpEndpoint } from '@orbs-network/ton-access';
 import { NETWORK, JETTON_MINTER_ADDRESS } from '../../contracts/config';
 
+//@ts-ignore
 const testUserId = '574813379';
 
 //@ts-ignore
