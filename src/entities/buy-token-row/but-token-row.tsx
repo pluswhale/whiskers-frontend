@@ -20,6 +20,7 @@ type BuyRow = {
     countWhisk: number;
     userId: string | undefined;
     userTonAddress: string | undefined;
+    jettonBalance: number;
 };
 
 export const BuyTokenRow: FC<BuyRow> = (row): ReactElement => {
@@ -28,7 +29,7 @@ export const BuyTokenRow: FC<BuyRow> = (row): ReactElement => {
     const [tonConnectUI] = useTonConnectUI();
     const connected = tonConnectUI.connected;
 
-    const { id, countSpin, countWhisk, userId, userTonAddress } = row;
+    const { id, countSpin, countWhisk, userId, userTonAddress, jettonBalance } = row;
 
     const onBuyBonusToken = async (countSpin: number) => {
         if (!userTonAddress) {
@@ -45,6 +46,18 @@ export const BuyTokenRow: FC<BuyRow> = (row): ReactElement => {
             });
         } else if (!connected) {
             toast.error(`Please connect TON Wallet!`, {
+                position: 'bottom-left',
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'dark',
+                transition: Flip,
+            });
+        } else if (jettonBalance < countWhisk) {
+            toast.error(`Insufficient WHISK balance. Buy on STONfi.`, {
                 position: 'bottom-left',
                 autoClose: 3000,
                 hideProgressBar: false,
