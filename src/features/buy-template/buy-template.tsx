@@ -314,6 +314,7 @@ export const BuyTemplate: FC = (): ReactElement => {
                                 countWhisk={buyRow.countWhisks}
                                 userId={userData?.userId}
                                 userTonAddress={userData?.userTonAddress}
+                                jettonBalance={jettonBalance}
                             />
                         ))}
                 </div>
