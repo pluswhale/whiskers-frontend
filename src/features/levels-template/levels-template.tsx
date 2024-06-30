@@ -52,7 +52,7 @@ export const LevelsTemplate: FC = (): ReactElement => {
                                 <br />
                                 Invite{' '}
                                 {getCountOfNeededReferral(
-                                    userData?.referredUsers?.length || 0,
+                                    userData?.referredUsers?.length || null,
                                     userData?.level || 1,
                                 )}{' '}
                                 more friends to reach level {userData?.level && userData?.level + 1}.

@@ -1,5 +1,5 @@
-export function getCountOfNeededReferral(countReferrals: number, level: number) {
-    if (!countReferrals || !level) {
+export function getCountOfNeededReferral(countReferrals: number | null, level: number) {
+    if (countReferrals === null || !level) {
         return '0';
     }
 
