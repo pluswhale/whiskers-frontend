@@ -9,7 +9,7 @@ export function getTimeLeftFromTimestamp(timestamp: string): string {
     }
 
     const now = new Date();
-    const targetTime = new Date(new Date(timestamp).getTime() + SIX_HOURS); // Adjusted target time
+    const targetTime = new Date(new Date(timestamp).getTime() + ONE_MINS); // Adjusted target time
 
     const timeDiff = targetTime.getTime() - now.getTime();
 

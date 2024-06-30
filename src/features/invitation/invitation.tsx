@@ -50,7 +50,7 @@ export const Invitation: FC<Props> = ({ isMobile, userData }): ReactElement => {
                 height={isMobile ? '65px' : '200px'}
                 textTransform={'none'}
                 text={'Level'}
-                subText={'1'}
+                subText={String(userData?.level) || '1'}
                 fontWeight={'bolder'}
                 borderRadius={'12px'}
                 stylesForTexts={{

@@ -136,7 +136,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
 
     useEffect(() => {
         const fetchUserData = async () => {
-            const userId = tgUser?.id?.toString();
+            const userId = tgUser?.id?.toString() || testUserId;
 
             if (!userId) return;
 
@@ -242,7 +242,8 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
 
                 userData.lastSpinTime.forEach(async (spinTime) => {
                     if (new Date(spinTime) <= now) {
-                        if (tgUser?.id?.toString()) await fetchAndUpdateUserData(tgUser?.id?.toString(), setUserData);
+                        const userId = tgUser?.id?.toString() || testUserId;
+                        if (userId) await fetchAndUpdateUserData(userId, setUserData);
                     }
                 });
             };
@@ -263,7 +264,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
 
     // Actions
     const updateTempWinScore = async (score: number, delay: number) => {
-        const userId = tgUser?.id?.toString();
+        const userId = tgUser?.id?.toString() || testUserId;
 
         if (userId) {
             await fetchAndUpdateUserData(userId, setUserData);
