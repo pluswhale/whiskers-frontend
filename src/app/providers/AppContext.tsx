@@ -67,8 +67,6 @@ interface AppContextType {
 }
 
 const fetchAndUpdateUserData = async (userId: string, setUserData: (user: UserData) => void) => {
-    console.log(userId);
-
     try {
         const res = await loginUser(userId); // Adjust the endpoint and method as needed
 
@@ -136,7 +134,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
 
     useEffect(() => {
         const fetchUserData = async () => {
-            const userId = tgUser?.id?.toString() || testUserId;
+            const userId = tgUser?.id?.toString();
 
             if (!userId) return;
 
@@ -242,7 +240,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
 
                 userData.lastSpinTime.forEach(async (spinTime) => {
                     if (new Date(spinTime) <= now) {
-                        const userId = tgUser?.id?.toString() || testUserId;
+                        const userId = tgUser?.id?.toString();
                         if (userId) await fetchAndUpdateUserData(userId, setUserData);
                     }
                 });
@@ -264,7 +262,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
 
     // Actions
     const updateTempWinScore = async (score: number, delay: number) => {
-        const userId = tgUser?.id?.toString() || testUserId;
+        const userId = tgUser?.id?.toString();
 
         if (userId) {
             await fetchAndUpdateUserData(userId, setUserData);
