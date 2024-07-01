@@ -2,7 +2,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { createContext, ReactElement, useContext, useEffect, useState } from 'react';
 import LoaderScreen from '../../features/loader-screen/LoaderScreen';
-import { loginUser, referralUser, fetchSnapshotInfo, fetchAirdropList } from '../../shared/api/user/thunks';
+import {
+    loginUser,
+    referralUser,
+    fetchSnapshotInfo,
+    fetchAirdropList,
+    verifyTelegramMembershipByUser,
+} from '../../shared/api/user/thunks';
 import { useMediaQuery } from 'react-responsive';
 import { removeAllCookies } from '../../shared/libs/cookies';
 import { parseUriParamsLine } from '../../shared/utils/parseUriParams';
@@ -30,6 +36,7 @@ export interface UserData {
     points: number;
     level: number;
     claimedWhisks: number;
+    tasks: UserTask[];
     userTonAddress: string;
     updatedAt: string;
     lastSpinTime: string[];
@@ -37,6 +44,13 @@ export interface UserData {
     __v: number;
     _id: string;
 }
+
+export type UserTask = {
+    taskId: string;
+    name: string;
+    isCompleted: boolean;
+    _id: string;
+};
 
 export interface TelegramUserData {
     allows_write_to_pm: boolean;
@@ -143,6 +157,15 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
 
                 if (res && res?.user) {
                     setUserData(res.user);
+
+                    const isUserJoinedToTelegramGroup = res.user?.tasks ? res.user.tasks?.[2]?.isCompleted : false;
+
+                    if (!isUserJoinedToTelegramGroup) {
+                        const res = await verifyTelegramMembershipByUser(userId);
+                        if (res && res.status === 200) {
+                            setUserData((prev: any) => ({ ...prev, points: prev?.points + 500 }));
+                        }
+                    }
 
                     if (uriParams?.tgWebAppStartParam) {
                         await referralUser(res.user.userId, {

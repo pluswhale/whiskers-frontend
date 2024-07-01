@@ -24,6 +24,20 @@ export const fetchUserById = async (userId: string) => {
     }
 };
 
+export const verifyTelegramMembershipByUser = async (userId: string) => {
+    try {
+        const res = await userApi.verifyTelegramMembership(userId);
+
+        if (res) {
+            return res;
+        }
+
+        return null;
+    } catch (err) {
+        console.error(err);
+    }
+};
+
 export const spinWheelByUser = async (userId: string, body: SpinWheelBody) => {
     try {
         const res = await userApi.spinWheel(userId, body);
