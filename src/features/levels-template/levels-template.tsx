@@ -52,26 +52,21 @@ export const LevelsTemplate: FC = (): ReactElement => {
                                 <br />
                                 Invite{' '}
                                 {getCountOfNeededReferral(
-                                    userData?.referredUsers?.length || null,
+                                    userData?.referredUsers?.length || 0,
                                     userData?.level || 1,
                                 )}{' '}
-                                more friends to reach level {userData?.level && userData?.level + 1}.
+                                or more friends to reach level {userData?.level && userData?.level + 1}.
                             </>
                         )}
                     </Typography>
                 </div>
                 <div className={styles.levels__levels_rows}>
                     {LEVEL_ROWS_DATA &&
-                        LEVEL_ROWS_DATA.map(({ level, freeSpinLimit, referralsMin, referralsMax }, index) => (
+                        LEVEL_ROWS_DATA.map(({ level, freeSpinLimit, referralsMin, referralsMax, icon }, index) => (
                             <ActionButton
                                 key={index}
                                 onClick={onInvitation}
-                                imageLeft={
-                                    <Icon
-                                        style={{ width: '25px', height: '25px', flexShrink: 0 }}
-                                        src={`/whiskers-frontend/src/assets/images/circle-${index + 1}.png`}
-                                    />
-                                }
+                                imageLeft={<Icon style={{ width: '25px', height: '25px', flexShrink: 0 }} src={icon} />}
                                 textRight={referralsMax ? `${referralsMin}-${referralsMax}` : `${referralsMin}+`}
                                 subTextRight={'referrals'}
                                 fontFamily={'Montserrat, sans-serif'}

@@ -13,11 +13,13 @@ import { REF_TEXT, WHISK_BOT_NAME } from '../invitation/invitation';
 import inviteIcon from '../../assets/images/invite.png';
 import megaphoneIcon from '../../assets/images/megaphone.png';
 import telegramIcon from '../../assets/images/telegram.png';
+//@ts-ignore
 import { fetchTasks } from '../../shared/api/user/thunks';
 
 export const TasksTemplate: FC = (): ReactElement => {
     const navigate = useNavigate();
     const { userData, isMobile } = useAppContext();
+    //@ts-ignore
     const [tasks, setTasks] = useState([]);
 
     useEffect(() => {
@@ -26,9 +28,9 @@ export const TasksTemplate: FC = (): ReactElement => {
             const res = await fetch(`http://localhost:4000/spin-and-earn/tasks/?userId=574813379`); // test for now. swap for the upper comment after be fixes
             const data = await res.json();
             setTasks(data);
-        }
+        };
         fetchUserTasks();
-    }, [])
+    }, []);
 
     const onNavigateToMainScreen = () => {
         navigate(-1);
@@ -151,3 +153,4 @@ export const TasksTemplate: FC = (): ReactElement => {
         </div>
     );
 };
+
