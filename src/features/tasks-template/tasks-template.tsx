@@ -26,9 +26,9 @@ export const TasksTemplate: FC = (): ReactElement => {
         window.location.href = refLink;
     };
 
-    // const onJoinTg = () => {
-    //   window.location.href = 'LINK_TO_TELEGRAM_BOT' //insert a link to the bot when it's ready
-    // }
+    const onJoinTg = () => {
+      window.location.href = 'https://t.me/whiskersTON' //insert a link to the bot when it's ready
+    }
 
     return (
         <div className={styles.tasks__wrapper}>
@@ -89,7 +89,7 @@ export const TasksTemplate: FC = (): ReactElement => {
                             />
                         ))}
                     <ActionButton
-                        onClick={onInvitation}
+                        onClick={onJoinTg}
                         imageLeft={<Icon style={{ width: '20px', height: '20px', flexShrink: 0 }} src={telegramIcon} />}
                         textRight={'500'}
                         subTextRight={'WHISK'}
