@@ -48,12 +48,14 @@ export const TasksTemplate: FC = (): ReactElement => {
                 </div>
                 <div className={styles.tasks__tasks_rows}>
                     {userData?.tasks &&
-                        userData?.tasks.map(({ name, description, reward }, index) => (
+                        userData?.tasks.map(({ name, description, reward }, index, users) => (
                             <ActionButton
                                 key={index}
-                                onClick={onInvitation}
+                                onClick={index === users.length-1 ? onJoinTg : onInvitation}
                                 imageLeft={
-                                    <Icon style={{ width: '20px', height: '20px', flexShrink: 0 }} src={inviteIcon} />
+                                    index === users.length-1 ? 
+                                        <Icon style={{ width: '20px', height: '20px', flexShrink: 0 }} src={inviteIcon} />
+                                        : <Icon style={{ width: '20px', height: '20px', flexShrink: 0 }} src={telegramIcon} />
                                 }
                                 textRight={String(reward)}
                                 subTextRight={'WHISK'}
@@ -88,37 +90,6 @@ export const TasksTemplate: FC = (): ReactElement => {
                                 }}
                             />
                         ))}
-                    <ActionButton
-                        onClick={onJoinTg}
-                        imageLeft={<Icon style={{ width: '20px', height: '20px', flexShrink: 0 }} src={telegramIcon} />}
-                        textRight={'500'}
-                        subTextRight={'WHISK'}
-                        fontFamily={'Montserrat, sans-serif'}
-                        height={isMobile ? '65px' : '200px'}
-                        textTransform={'none'}
-                        text={`Join TG group`}
-                        subText={`Join Whiskers's Telegram group`}
-                        fontWeight={'bolder'}
-                        borderRadius={'12px'}
-                        gap={'20px'}
-                        stylesForTexts={{
-                            main: { fontSize: isMobile ? '18px' : '42px', fontWeight: 'bold', textAlign: 'left' },
-                            sub: {
-                                fontSize: isMobile ? '14px' : '32px',
-                                fontWeight: 'normal',
-                                textAlign: 'left',
-                                whiteSpace: 'wrap',
-                            },
-                        }}
-                        stylesForTextsRight={{
-                            main: {
-                                fontSize: isMobile ? '24px' : '42px',
-                                fontWeight: 'bold',
-                                fontFamily: 'Roundy Rainbows, sans-serif',
-                            },
-                            sub: { fontSize: isMobile ? '14px' : '32px', fontWeight: 'normal' },
-                        }}
-                    />
                 </div>
                 <div className={styles.tasks__balance}>
                     <div onClick={onNavigateToMainScreen} className={styles.tasks__back}>
