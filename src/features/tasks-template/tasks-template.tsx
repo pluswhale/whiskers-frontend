@@ -27,8 +27,8 @@ export const TasksTemplate: FC = (): ReactElement => {
     };
 
     const onJoinTg = () => {
-      window.location.href = 'https://t.me/whiskersTON' //insert a link to the bot when it's ready
-    }
+        window.location.href = 'https://t.me/whiskersTON'; //insert a link to the bot when it's ready
+    };
 
     return (
         <div className={styles.tasks__wrapper}>
@@ -51,11 +51,19 @@ export const TasksTemplate: FC = (): ReactElement => {
                         userData?.tasks.map(({ name, description, reward }, index, users) => (
                             <ActionButton
                                 key={index}
-                                onClick={index === users.length-1 ? onJoinTg : onInvitation}
+                                onClick={index === users.length - 1 ? onJoinTg : onInvitation}
                                 imageLeft={
-                                    index === users.length-1 ? 
-                                        <Icon style={{ width: '20px', height: '20px', flexShrink: 0 }} src={inviteIcon} />
-                                        : <Icon style={{ width: '20px', height: '20px', flexShrink: 0 }} src={telegramIcon} />
+                                    index === users.length - 1 ? (
+                                        <Icon
+                                            style={{ width: '20px', height: '20px', flexShrink: 0 }}
+                                            src={inviteIcon}
+                                        />
+                                    ) : (
+                                        <Icon
+                                            style={{ width: '20px', height: '20px', flexShrink: 0 }}
+                                            src={telegramIcon}
+                                        />
+                                    )
                                 }
                                 textRight={String(reward)}
                                 subTextRight={'WHISK'}
