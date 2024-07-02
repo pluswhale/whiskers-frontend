@@ -54,8 +54,8 @@ export const TasksTemplate: FC = (): ReactElement => {
                                 onClick={index === users.length-1 ? onJoinTg : onInvitation}
                                 imageLeft={
                                     index === users.length-1 ? 
-                                        <Icon style={{ width: '20px', height: '20px', flexShrink: 0 }} src={inviteIcon} />
-                                        : <Icon style={{ width: '20px', height: '20px', flexShrink: 0 }} src={telegramIcon} />
+                                        <Icon style={{ width: '20px', height: '20px', flexShrink: 0 }} src={telegramIcon} />
+                                        : <Icon style={{ width: '20px', height: '20px', flexShrink: 0 }} src={inviteIcon} />
                                 }
                                 textRight={String(reward)}
                                 subTextRight={'WHISK'}
