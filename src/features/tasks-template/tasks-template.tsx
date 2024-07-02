@@ -56,12 +56,12 @@ export const TasksTemplate: FC = (): ReactElement => {
                                     index === users.length - 1 ? (
                                         <Icon
                                             style={{ width: '20px', height: '20px', flexShrink: 0 }}
-                                            src={inviteIcon}
+                                            src={telegramIcon}
                                         />
                                     ) : (
                                         <Icon
                                             style={{ width: '20px', height: '20px', flexShrink: 0 }}
-                                            src={telegramIcon}
+                                            src={inviteIcon}
                                         />
                                     )
                                 }
