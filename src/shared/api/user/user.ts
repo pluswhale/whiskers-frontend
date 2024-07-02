@@ -14,5 +14,6 @@ export const userApi = {
     buySpins: (userId: string, body: BuySpinsBody) => Instance.post(`buy/${userId}`, body),
     loginUser: (userId: string) => Instance.post(`login/${userId}`),
     referral: (refferedUserId: string, body: ReferralBody) => Instance.post(`referral/${refferedUserId}`, body),
+    getTasks: (userId: string) => Instance.get(`tasks/${userId}`),
 };
 
