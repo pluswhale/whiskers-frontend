@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../app/providers/AppContext';
-import { FC, ReactElement } from 'react';
+import { FC, ReactElement, useEffect, useState } from 'react';
 import styles from './tasks-template.module.scss';
 import { Logo } from '../../shared/components/logo';
 import { Heading } from '../../shared/components/heading';
@@ -13,10 +13,22 @@ import { REF_TEXT, WHISK_BOT_NAME } from '../invitation/invitation';
 import inviteIcon from '../../assets/images/invite.png';
 import megaphoneIcon from '../../assets/images/megaphone.png';
 import telegramIcon from '../../assets/images/telegram.png';
+import { fetchTasks } from '../../shared/api/user/thunks';
 
 export const TasksTemplate: FC = (): ReactElement => {
     const navigate = useNavigate();
     const { userData, isMobile } = useAppContext();
+    const [tasks, setTasks] = useState([]);
+
+    useEffect(() => {
+        const fetchUserTasks = async () => {
+            // const data = await fetchTasks(userData.userId)
+            const res = await fetch(`http://localhost:4000/spin-and-earn/tasks/?userId=574813379`); // test for now. swap for the upper comment after be fixes
+            const data = await res.json();
+            setTasks(data);
+        }
+        fetchUserTasks();
+    }, [])
 
     const onNavigateToMainScreen = () => {
         navigate(-1);
@@ -48,7 +60,7 @@ export const TasksTemplate: FC = (): ReactElement => {
                     </Typography>
                 </div>
                 <div className={styles.tasks__tasks_rows}>
-                    {TASKS_ROWS_DATA &&
+                    {TASKS_ROWS_DATA && //render tasks from state after be fixes
                         TASKS_ROWS_DATA.map(({ amountToInvite, reward }, index) => (
                             <ActionButton
                                 key={index}
