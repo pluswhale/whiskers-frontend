@@ -48,6 +48,8 @@ export interface UserData {
 export type UserTask = {
     taskId: string;
     name: string;
+    description?: string;
+    reward: number;
     isCompleted: boolean;
     _id: string;
 };

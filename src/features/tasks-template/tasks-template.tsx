@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../app/providers/AppContext';
-import { FC, ReactElement, useEffect, useState } from 'react';
+import { FC, ReactElement } from 'react';
 import styles from './tasks-template.module.scss';
 import { Logo } from '../../shared/components/logo';
 import { Heading } from '../../shared/components/heading';
@@ -8,29 +8,14 @@ import { Typography } from '../../shared/components/typography';
 import { ActionButton } from '../../shared/components/action-button';
 import { Icon } from '../../shared/components/icon';
 import backIcon from '../../assets/images/back-arrow.png';
-import { TASKS_ROWS_DATA } from './constants';
 import { REF_TEXT, WHISK_BOT_NAME } from '../invitation/invitation';
 import inviteIcon from '../../assets/images/invite.png';
 import megaphoneIcon from '../../assets/images/megaphone.png';
 import telegramIcon from '../../assets/images/telegram.png';
-//@ts-ignore
-import { fetchTasks } from '../../shared/api/user/thunks';
 
 export const TasksTemplate: FC = (): ReactElement => {
     const navigate = useNavigate();
     const { userData, isMobile } = useAppContext();
-    //@ts-ignore
-    const [tasks, setTasks] = useState([]);
-
-    useEffect(() => {
-        const fetchUserTasks = async () => {
-            // const data = await fetchTasks(userData.userId)
-            const res = await fetch(`http://localhost:4000/spin-and-earn/tasks/?userId=574813379`); // test for now. swap for the upper comment after be fixes
-            const data = await res.json();
-            setTasks(data);
-        };
-        fetchUserTasks();
-    }, []);
 
     const onNavigateToMainScreen = () => {
         navigate(-1);
@@ -62,8 +47,8 @@ export const TasksTemplate: FC = (): ReactElement => {
                     </Typography>
                 </div>
                 <div className={styles.tasks__tasks_rows}>
-                    {TASKS_ROWS_DATA && //render tasks from state after be fixes
-                        TASKS_ROWS_DATA.map(({ amountToInvite, reward }, index) => (
+                    {userData?.tasks &&
+                        userData?.tasks.map(({ name, description, reward }, index) => (
                             <ActionButton
                                 key={index}
                                 onClick={onInvitation}
@@ -75,8 +60,8 @@ export const TasksTemplate: FC = (): ReactElement => {
                                 fontFamily={'Montserrat, sans-serif'}
                                 height={isMobile ? '65px' : '200px'}
                                 textTransform={'none'}
-                                text={`Invite ${amountToInvite} friends`}
-                                subText={`Refer ${amountToInvite} friends that spun at least twice`}
+                                text={name}
+                                subText={description}
                                 fontWeight={'bolder'}
                                 borderRadius={'12px'}
                                 gap={'20px'}
