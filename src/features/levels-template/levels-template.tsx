@@ -97,6 +97,7 @@ export const LevelsTemplate: FC = (): ReactElement => {
                                     },
                                     sub: { fontSize: isMobile ? '14px' : '32px', fontWeight: 'normal' },
                                 }}
+                                backgroundImage={'linear-gradient(to bottom, #383a51 20%, #252739)'}
                             />
                         ))}
                 </div>
