@@ -21,7 +21,7 @@ import { getHttpEndpoint } from '@orbs-network/ton-access';
 import { NETWORK, JETTON_MINTER_ADDRESS } from '../../contracts/config';
 
 //@ts-ignore
-const testUserId = '574813379';
+const testUserId = '459509065';
 
 //@ts-ignore
 const tg: any = window?.Telegram?.WebApp;
@@ -129,6 +129,8 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
     const isMobileDevice = md.mobile() !== null || md.tablet() !== null;
     const isTelegramWebApp = userAgent.includes('Telegram');
 
+    const userId = tgUser?.id?.toString() || testUserId;
+
     useEffect(() => {
         return () => {
             onExitFromApp();
@@ -150,7 +152,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
 
     useEffect(() => {
         const fetchUserData = async () => {
-            const userId = tgUser?.id?.toString();
+            // const userId = tgUser?.id?.toString();
 
             if (!userId) return;
 
@@ -232,9 +234,9 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
             try {
                 const res = await fetchSnapshotInfo();
                 if (res) {
-                    setIsClaimable(res[0].isClaimable);
-                    setAirdropCell(res[0].airdropCell);
-                    setCampaignNumber(res[0].campaignNumber);
+                    setIsClaimable(res?.[0]?.isClaimable);
+                    setAirdropCell(res?.[0]?.airdropCell);
+                    setCampaignNumber(res?.[0]?.campaignNumber);
                 }
             } catch (err) {
                 console.error('Fetching snapshot error: ', err);
@@ -265,7 +267,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
 
                 userData.lastSpinTime.forEach(async (spinTime) => {
                     if (new Date(spinTime) <= now) {
-                        const userId = tgUser?.id?.toString();
+                        // const userId = tgUser?.id?.toString();
                         if (userId) await fetchAndUpdateUserData(userId, setUserData);
                     }
                 });
@@ -275,7 +277,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
 
             return () => clearInterval(interval);
         }
-    }, [tgUser?.id, userData?.lastSpinTime]);
+    }, [userId, userData?.lastSpinTime]);
 
     if (!isMobileDevice || isTelegramWebApp) {
         return <DeviceCheckingScreen />;
@@ -287,7 +289,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
 
     // Actions
     const updateTempWinScore = async (score: number, delay: number) => {
-        const userId = tgUser?.id?.toString();
+        // const userId = tgUser?.id?.toString();
 
         if (userId) {
             await fetchAndUpdateUserData(userId, setUserData);
