@@ -113,6 +113,7 @@ export const useAppContext = () => {
 export const AppContextProvider: React.FC<{ children: ReactElement | ReactElement[] }> = ({ children }) => {
     const isMobile = useMediaQuery({ query: '(max-width: 600px)' });
     const [tgUser, setTgUser] = useState<TelegramUserData | null>(null);
+    const [userId, setUserId] = useState<string | null>(null);
     const [userData, setUserData] = useState<UserData | null>(null);
     const [loading, setIsLoading] = useState<boolean>(true);
     const [isFreeSpins, setIsFreeSpins] = useState<boolean | null>(false);
@@ -129,8 +130,6 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
     const isMobileDevice = md.mobile() !== null || md.tablet() !== null;
     const isTelegramWebApp = userAgent.includes('Telegram');
 
-    const userId = tgUser?.id?.toString() || testUserId;
-
     useEffect(() => {
         return () => {
             onExitFromApp();
@@ -142,9 +141,13 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
         if (window.Telegram && window.Telegram.WebApp) {
             //@ts-ignore
             tg.ready();
-            // Get user data from the Telegram Web App context
             const user = tg.initDataUnsafe.user;
-            setTgUser(user);
+            if (!user) {
+                setUserId(testUserId);
+            } else {
+                setUserId(user.id);
+                setTgUser(user);
+            }
         } else {
             console.error('Telegram WebApp is not initialized or running outside of Telegram context.');
         }
@@ -183,7 +186,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
         };
 
         fetchUserData();
-    }, [tgUser?.id, uriParams?.startapp]);
+    }, [userId, uriParams?.startapp]);
 
     useEffect(() => {
         //@ts-ignore
