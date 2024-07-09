@@ -349,8 +349,6 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
     };
 
     async function addPointForJoiningGroup(userTasks: UserTask[], userId: string, clearInterval?: any) {
-        console.log('ut', userTasks);
-
         const isUserJoinedToTelegramGroup = userTasks?.[2]?.isCompleted;
 
         if (!isUserJoinedToTelegramGroup) {
@@ -365,11 +363,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
                     }
                 });
 
-                console.log('updated tasks', updatedTasks);
-
                 setUserData((prev: any) => ({ ...prev, points: prev?.points + 500, tasks: updatedTasks }));
-
-                console.log('user data', userData);
 
                 if (clearInterval) clearInterval();
             }
