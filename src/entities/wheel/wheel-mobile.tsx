@@ -36,7 +36,7 @@ const WinAnimations: { [key in WinAnimation]: any } = {
 };
 
 export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLoggedIn }): ReactElement => {
-    const { userData, isFreeSpins, updateFreeSpins, updateBonusSpins, updateTempWinScore } = useAppContext();
+    const { userData, updateTempWinScore } = useAppContext();
     const { startAudio, stopAudio, isPlaying } = useAudio();
     const [isDisplayAnimation, setIsDisplayAnimation] = useState<boolean>(false);
     const [isFastSpinning, setIsFastSpinning] = useState<boolean>(false);
