@@ -8,6 +8,7 @@ import {
     fetchSnapshotInfo,
     fetchAirdropList,
     verifyTelegramMembershipByUser,
+    fetchCurrentSector,
 } from '../../shared/api/user/thunks';
 import { useMediaQuery } from 'react-responsive';
 import { removeAllCookies } from '../../shared/libs/cookies';
@@ -26,6 +27,7 @@ const testUserId = '574813379';
 //@ts-ignore
 const tg: any = window?.Telegram?.WebApp;
 
+
 export interface UserData {
     bonusSpins: number;
     createdAt: string;
@@ -41,6 +43,10 @@ export interface UserData {
     updatedAt: string;
     lastSpinTime: string[];
     userId: string;
+    currentSector: {
+        prizeValue: any;
+        sector: number;
+    };
     __v: number;
     _id: string;
 }
@@ -66,6 +72,7 @@ export interface TelegramUserData {
 
 interface AppContextType {
     userData: UserData | null;
+    setUserData: any;
     isFreeSpins: boolean | null;
     isMobile: boolean;
     isAvailableToSpin: boolean;
@@ -160,8 +167,12 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
 
             try {
                 const { user } = await loginUser(userId);
-
+                console.log('user before fetchCurrentSector', user)
                 if (user) {
+                    if(user.currentSector.prizeValue === 0) {
+                        user.currentSector = (await fetchCurrentSector(userId)).data;
+                        console.log(user.currentSector)
+                    }
                     setUserData(user);
                     console.log(user, 'logged user');
 
@@ -380,6 +391,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
             value={{
                 tgUser,
                 userData,
+                setUserData,
                 isFreeSpins,
                 isAvailableToSpin,
                 isMobile,
