@@ -9,6 +9,7 @@ import {
     fetchAirdropList,
     verifyTelegramMembershipByUser,
     fetchCurrentSector,
+    spinByUser,
 } from '../../shared/api/user/thunks';
 import { useMediaQuery } from 'react-responsive';
 import { removeAllCookies } from '../../shared/libs/cookies';
@@ -26,7 +27,6 @@ const testUserId = '574813379';
 
 //@ts-ignore
 const tg: any = window?.Telegram?.WebApp;
-
 
 export interface UserData {
     bonusSpins: number;
@@ -97,7 +97,12 @@ const fetchAndUpdateUserData = async (userId: string, setUserData: (user: UserDa
         if (res) {
             //@ts-ignore
             setUserData((prev: UserData): UserData => {
-                return { ...prev, lastSpinTime: res?.user?.lastSpinTime, spinsAvailable: res?.user?.spinsAvailable };
+                return {
+                    ...prev,
+                    lastSpinTime: res?.user?.lastSpinTime,
+                    spinsAvailable: res?.user?.spinsAvailable,
+                    bonusSpins: res?.user?.bonusSpins,
+                };
             });
             // Assume the backend handles spin recharging
         }
@@ -161,20 +166,19 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
         }
     }, []);
 
+    console.log('user', userData);
+
     useEffect(() => {
         const fetchUserData = async () => {
             if (!userId) return;
 
             try {
                 const { user } = await loginUser(userId);
-                console.log('user before fetchCurrentSector', user)
                 if (user) {
-                    if(user.currentSector.prizeValue === 0) {
-                        user.currentSector = (await fetchCurrentSector(userId)).data;
-                        console.log(user.currentSector)
+                    if (user.currentSector.prizeValue === 0) {
+                        user.currentSector = (await fetchCurrentSector(userId))?.data;
                     }
                     setUserData(user);
-                    console.log(user, 'logged user');
 
                     await addPointForJoiningGroup(user.tasks, userId); // -- add 500 points if user join to group
 
@@ -296,6 +300,9 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
     // Actions
     const updateTempWinScore = async (score: number, delay: number) => {
         if (userId) {
+            //@ts-ignore
+            setUserData({ ...userData, currentSector: (await fetchCurrentSector(userId))?.data });
+            await spinByUser(userId, Boolean(isFreeSpins));
             await fetchAndUpdateUserData(userId, setUserData);
         }
         setTimeout(() => {
