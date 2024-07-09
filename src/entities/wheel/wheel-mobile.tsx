@@ -20,7 +20,7 @@ import { useAudio } from '../../app/providers/AudioProvider';
 import muteMusicImage from '../../assets/images/no-sound.png';
 import enableMusicImage from '../../assets/images/medium-volume.png';
 import fastForwardButton from '../../assets/images/fast-forward-button.png';
-import { getRandomSector } from '../../shared/api/user/thunks';
+import { fetchCurrentSector, spinByUser } from '../../shared/api/user/thunks';
 
 interface WheelMobileProps {
     isAvailableToSpin: boolean;
@@ -37,7 +37,7 @@ const WinAnimations: { [key in WinAnimation]: any } = {
 };
 
 export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLoggedIn }): ReactElement => {
-    const { userData, isFreeSpins, updateFreeSpins, updateBonusSpins, updateTempWinScore } = useAppContext();
+    const { userData, setUserData, isFreeSpins, updateFreeSpins, updateBonusSpins, updateTempWinScore } = useAppContext();
     const { startAudio, stopAudio, isPlaying } = useAudio();
     const [isDisplayAnimation, setIsDisplayAnimation] = useState<boolean>(false);
     const [isFastSpinning, setIsFastSpinning] = useState<boolean>(false);
@@ -130,7 +130,7 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
         drawWheel(beginTwistAngleRef.current, sectorsData);
     }
 
-    const handleSpinButtonClick = () => {
+    const handleSpinButtonClick = async () => {
         if (isUserLoggedIn) {
             if (isNeedRotateSpinIcon || !isAvailableToSpin || isFastSpinning) return;
 
@@ -156,7 +156,7 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
                 setIsDisplayAnimation(true);
             }, WHEEL_SPINNING_SECONDS);
 
-            setTimeout(() => {
+            setTimeout(async () => {
                 setIsNeedRotateSpinIcon(false);
                 setIsDisplayAnimation(false);
                 if (audioRef.current) {
@@ -164,6 +164,11 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
                     audioRef.current.pause();
                 }
             }, 7000);
+
+            const msg = await spinByUser(userData?.userId || '', Boolean(isFreeSpins));
+            const currentSector = await fetchCurrentSector(userData?.userId || '');
+            setUserData({...userData, currentSector})
+            console.log(msg)
 
             setTimeout(() => {}, 7_000);
         } else {
@@ -224,10 +229,12 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
     };
 
     const twistWheel = async (duration: number, delay: number) => {
-        const { sector: randomSectorValue, prizeValue } = (
-            await getRandomSector(userData?.userId || '', Boolean(isFreeSpins))
-        ).data;
+        // const { sector: randomSectorValue, prizeValue } = (
+        //     await getRandomSector(userData?.userId || '', Boolean(isFreeSpins))
+        // ).data;
 
+        const { prizeValue, sector: randomSectorValue } = userData?.currentSector || {};
+        console.log('Prize value: ', prizeValue)
         updateTempWinScore(prizeValue, delay);
         setWinAnimation(prizeValue);
 

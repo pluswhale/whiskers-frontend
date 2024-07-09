@@ -15,5 +15,7 @@ export const userApi = {
     loginUser: (userId: string) => Instance.post(`login/${userId}`),
     referral: (refferedUserId: string, body: ReferralBody) => Instance.post(`referral/${refferedUserId}`, body),
     getTasks: (userId: string) => Instance.get(`tasks/${userId}`),
+    fetchCurrentSector: (userId: string) => Instance.post(`set-current-sector/${userId}`),
+    spinByUser: (userId: string, isFreeSpin: boolean) => Instance.post(`spin-by-user/${userId}`, { isFreeSpin })
 };
 

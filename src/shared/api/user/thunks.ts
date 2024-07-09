@@ -10,6 +10,24 @@ export const loginUser = async (userId: string) => {
     }
 };
 
+export const fetchCurrentSector = async (userId: string) => {
+    try {
+        const res = await userApi.fetchCurrentSector(userId);
+        return res.data
+    } catch (err) {
+        console.error(err)
+    }
+}
+
+export const spinByUser = async (userId: string, isFreeSpin: boolean) => {
+    try {
+        const res = await userApi.spinByUser(userId, isFreeSpin);
+        return res.data.message
+    } catch (err) {
+        console.error(err)
+    }
+}
+
 export const fetchUserById = async (userId: string) => {
     try {
         const res = await userApi.getUserInfoById(userId);
