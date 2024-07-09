@@ -15,7 +15,7 @@ import telegramIcon from '../../assets/images/telegram.png';
 
 export const TasksTemplate: FC = (): ReactElement => {
     const navigate = useNavigate();
-    const { userData, isMobile } = useAppContext();
+    const { userData, isMobile, addPointForJoiningGroup } = useAppContext();
 
     const onNavigateToMainScreen = () => {
         navigate(-1);
@@ -28,6 +28,16 @@ export const TasksTemplate: FC = (): ReactElement => {
 
     const onJoinTg = () => {
         window.location.href = 'https://t.me/whiskersTON'; //insert a link to the bot when it's ready
+
+        const intervalId = setInterval(() => {
+            if (userData) {
+                addPointForJoiningGroup(userData.tasks, userData.userId, clearInterval(intervalId));
+            }
+        }, 1000);
+
+        setTimeout(() => {
+            clearInterval(intervalId);
+        }, 120000); // 120000 ms = 2 minutes
     };
 
     return (
@@ -48,57 +58,59 @@ export const TasksTemplate: FC = (): ReactElement => {
                 </div>
                 <div className={styles.tasks__tasks_rows}>
                     {userData?.tasks &&
-                        userData?.tasks.map(({ name, description, reward }, index, users) => (
-                            <ActionButton
-                                key={index}
-                                onClick={index === users.length - 1 ? onJoinTg : onInvitation}
-                                imageLeft={
-                                    index === users.length - 1 ? (
-                                        <Icon
-                                            style={{ width: '20px', height: '20px', flexShrink: 0 }}
-                                            src={telegramIcon}
-                                        />
-                                    ) : (
-                                        <Icon
-                                            style={{ width: '20px', height: '20px', flexShrink: 0 }}
-                                            src={inviteIcon}
-                                        />
-                                    )
-                                }
-                                textRight={String(reward)}
-                                subTextRight={'WHISK'}
-                                fontFamily={'Montserrat, sans-serif'}
-                                height={isMobile ? '65px' : '200px'}
-                                textTransform={'none'}
-                                text={name}
-                                subText={description}
-                                fontWeight={'bolder'}
-                                borderRadius={'12px'}
-                                gap={'20px'}
-                                stylesForTexts={{
-                                    main: {
-                                        fontSize: isMobile ? '18px' : '42px',
-                                        fontWeight: 'bold',
-                                        textAlign: 'left',
-                                    },
-                                    sub: {
-                                        fontSize: isMobile ? '14px' : '32px',
-                                        fontWeight: 'normal',
-                                        textAlign: 'left',
-                                        whiteSpace: 'wrap',
-                                    },
-                                }}
-                                stylesForTextsRight={{
-                                    main: {
-                                        fontSize: isMobile ? '24px' : '42px',
-                                        fontWeight: 'bold',
-                                        fontFamily: 'Roundy Rainbows, sans-serif',
-                                    },
-                                    sub: { fontSize: isMobile ? '14px' : '32px', fontWeight: 'normal' },
-                                }}
-                                backgroundImage={'linear-gradient(to bottom, #383a51 20%, #252739)'}
-                            />
-                        ))}
+                        userData?.tasks
+                            .filter((task) => !task.isCompleted)
+                            .map(({ name, description, reward }, index, users) => (
+                                <ActionButton
+                                    key={index}
+                                    onClick={index === users.length - 1 ? onJoinTg : onInvitation}
+                                    imageLeft={
+                                        index === users.length - 1 ? (
+                                            <Icon
+                                                style={{ width: '20px', height: '20px', flexShrink: 0 }}
+                                                src={telegramIcon}
+                                            />
+                                        ) : (
+                                            <Icon
+                                                style={{ width: '20px', height: '20px', flexShrink: 0 }}
+                                                src={inviteIcon}
+                                            />
+                                        )
+                                    }
+                                    textRight={String(reward)}
+                                    subTextRight={'WHISK'}
+                                    fontFamily={'Montserrat, sans-serif'}
+                                    height={isMobile ? '65px' : '200px'}
+                                    textTransform={'none'}
+                                    text={name}
+                                    subText={description}
+                                    fontWeight={'bolder'}
+                                    borderRadius={'12px'}
+                                    gap={'20px'}
+                                    stylesForTexts={{
+                                        main: {
+                                            fontSize: isMobile ? '18px' : '42px',
+                                            fontWeight: 'bold',
+                                            textAlign: 'left',
+                                        },
+                                        sub: {
+                                            fontSize: isMobile ? '14px' : '32px',
+                                            fontWeight: 'normal',
+                                            textAlign: 'left',
+                                            whiteSpace: 'wrap',
+                                        },
+                                    }}
+                                    stylesForTextsRight={{
+                                        main: {
+                                            fontSize: isMobile ? '24px' : '42px',
+                                            fontWeight: 'bold',
+                                            fontFamily: 'Roundy Rainbows, sans-serif',
+                                        },
+                                        sub: { fontSize: isMobile ? '14px' : '32px', fontWeight: 'normal' },
+                                    }}
+                                    backgroundImage={'linear-gradient(to bottom, #383a51 20%, #252739)'}
+                                />
+                            ))}
                 </div>
                 <div className={styles.tasks__balance}>
                     <div onClick={onNavigateToMainScreen} className={styles.tasks__back}>

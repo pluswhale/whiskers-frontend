@@ -21,7 +21,7 @@ import { getHttpEndpoint } from '@orbs-network/ton-access';
 import { NETWORK, JETTON_MINTER_ADDRESS } from '../../contracts/config';
 
 //@ts-ignore
-const testUserId = '459509065';
+const testUserId = '574813379';
 
 //@ts-ignore
 const tg: any = window?.Telegram?.WebApp;
@@ -75,6 +75,7 @@ interface AppContextType {
     updateTempWinScore: (score: number, delay: number) => void;
     updateClaimedWhisks: () => void;
     updateTonAddress: (address: string) => void;
+    addPointForJoiningGroup: (userTasks: UserTask[], userId: string, clearInterval?: any) => void;
     jettonBalance: number;
     isClaimable: number | null;
     airdropCell: string | null;
@@ -155,28 +156,20 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
 
     useEffect(() => {
         const fetchUserData = async () => {
-            // const userId = tgUser?.id?.toString();
-
             if (!userId) return;
 
             try {
-                const res = await loginUser(userId);
+                const { user } = await loginUser(userId);
 
-                if (res && res?.user) {
-                    setUserData(res.user);
+                if (user) {
+                    setUserData(user);
+                    console.log(user, 'logged user');
 
-                    const isUserJoinedToTelegramGroup = res.user?.tasks ? res.user.tasks?.[2]?.isCompleted : false;
-
-                    if (!isUserJoinedToTelegramGroup) {
-                        const res = await verifyTelegramMembershipByUser(userId);
-                        if (res && res.status === 200) {
-                            setUserData((prev: any) => ({ ...prev, points: prev?.points + 500 }));
-                        }
-                    }
+                    await addPointForJoiningGroup(user.tasks, userId); // -- add 500 points if user join to group
 
                     if (uriParams?.tgWebAppStartParam) {
-                        await referralUser(res.user.userId, {
-                            referredById: uriParams.tgWebAppStartParam.split('#')[0],
+                        await referralUser(user.userId, {
+                            referredById: uriParams.tgWebAppStartParam?.split('#')?.[0],
                         });
                     }
                 }
@@ -270,7 +263,6 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
 
                 userData.lastSpinTime.forEach(async (spinTime) => {
                     if (new Date(spinTime) <= now) {
-                        // const userId = tgUser?.id?.toString();
                         if (userId) await fetchAndUpdateUserData(userId, setUserData);
                     }
                 });
@@ -292,8 +284,6 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
 
     // Actions
     const updateTempWinScore = async (score: number, delay: number) => {
-        // const userId = tgUser?.id?.toString();
-
         if (userId) {
             await fetchAndUpdateUserData(userId, setUserData);
         }
@@ -358,6 +348,34 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
         fetchUserData();
     };
 
+    async function addPointForJoiningGroup(userTasks: UserTask[], userId: string, clearInterval?: any) {
+        console.log('ut', userTasks);
+
+        const isUserJoinedToTelegramGroup = userTasks?.[2]?.isCompleted;
+
+        if (!isUserJoinedToTelegramGroup) {
+            const res = await verifyTelegramMembershipByUser(userId);
+
+            if (res && res.status === 200) {
+                const updatedTasks = userTasks?.map((task) => {
+                    if (task.name === 'Join Telegram group') {
+                        return { ...task, isCompleted: true };
+                    } else {
+                        return task;
+                    }
+                });
+
+                console.log('updated tasks', updatedTasks);
+
+                setUserData((prev: any) => ({ ...prev, points: prev?.points + 500, tasks: updatedTasks }));
+
+                console.log('user data', userData);
+
+                if (clearInterval) clearInterval();
+            }
+        }
+    }
+
     function onExitFromApp() {
         removeAllCookies();
         tg.close();
@@ -376,6 +394,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
                 updateBonusSpins,
                 updateClaimedWhisks,
                 updateTonAddress,
+                addPointForJoiningGroup,
                 jettonBalance,
                 isClaimable,
                 airdropCell,
