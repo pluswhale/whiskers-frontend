@@ -36,7 +36,7 @@ const WinAnimations: { [key in WinAnimation]: any } = {
 };
 
 export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLoggedIn }): ReactElement => {
-    const { userData, updateTempWinScore } = useAppContext();
+    const { userData, updateTempWinScore, setIsWheelSpinning } = useAppContext();
     const { startAudio, stopAudio, isPlaying } = useAudio();
     const [isDisplayAnimation, setIsDisplayAnimation] = useState<boolean>(false);
     const [isFastSpinning, setIsFastSpinning] = useState<boolean>(false);
@@ -135,6 +135,8 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
 
             if (isDisplayAnimation) setIsDisplayAnimation(false);
 
+            setIsWheelSpinning(true);
+
             twistWheel(5000, WHEEL_SPINNING_SECONDS + 1000);
 
             setIsNeedRotateSpinIcon(true);
@@ -151,6 +153,7 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
 
             setTimeout(async () => {
                 setIsNeedRotateSpinIcon(false);
+                setIsWheelSpinning(false);
                 setIsDisplayAnimation(false);
                 if (audioRef.current) {
                     audioRef.current.currentTime = 0;
@@ -178,6 +181,8 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
 
             setIsFastSpinning(true);
 
+            setIsWheelSpinning(true);
+
             twistWheel(500, 500);
 
             setTimeout(() => {
@@ -192,7 +197,11 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
                     quickWinSoundRef.current.pause();
                     quickWinSoundRef.current.currentTime = 0;
                 }
-            }, 2000);
+            }, 3_500);
+
+            setTimeout(() => {
+                setIsWheelSpinning(false);
+            }, 5000);
         } else {
             toast.error(`Cannot spin it`, {
                 position: 'bottom-left',
@@ -211,7 +220,6 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
     const twistWheel = async (duration: number, delay: number) => {
         const { prizeValue, sector: randomSectorValue } = userData?.currentSector || {};
 
-        console.log('curr sector', userData?.currentSector);
         updateTempWinScore(prizeValue, delay);
         setWinAnimation(prizeValue);
 
@@ -470,7 +478,7 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
             <div className={styles.app__fast_forward}>
                 <img
                     onClick={handleFastSpinButtonClick}
-                    className={`${styles.app__fast_forward__icon} ${isFastSpinning ? styles.app__fast_forward__icon_active : ''}  ${!isAvailableToSpin || isNeedRotateSpinIcon ? styles.app__fast_forward__icon_non_active : ''}`}
+                    className={`${styles.app__fast_forward__icon} ${isFastSpinning ? styles.app__fast_forward__icon_active : ''}  ${!isAvailableToSpin || isFastSpinning ? styles.app__fast_forward__icon_non_active : ''}`}
                     src={fastForwardButton}
                 />
             </div>

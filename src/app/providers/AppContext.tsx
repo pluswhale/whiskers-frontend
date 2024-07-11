@@ -10,6 +10,7 @@ import {
     verifyTelegramMembershipByUser,
     fetchCurrentSector,
     spinByUser,
+    fetchUserMe,
 } from '../../shared/api/user/thunks';
 import { useMediaQuery } from 'react-responsive';
 import { removeAllCookies } from '../../shared/libs/cookies';
@@ -83,33 +84,13 @@ interface AppContextType {
     updateClaimedWhisks: () => void;
     updateTonAddress: (address: string) => void;
     addPointForJoiningGroup: (userTasks: UserTask[], userId: string, clearInterval?: any) => void;
+    setIsWheelSpinning: (arg: boolean) => void;
     jettonBalance: number;
     isClaimable: number | null;
     airdropCell: string | null;
     campaignNumber: number | null;
     airdropList: any[];
 }
-
-const fetchAndUpdateUserData = async (userId: string, setUserData: (user: UserData) => void) => {
-    try {
-        const res = await loginUser(userId); // Adjust the endpoint and method as needed
-
-        if (res) {
-            //@ts-ignore
-            setUserData((prev: UserData): UserData => {
-                return {
-                    ...prev,
-                    lastSpinTime: res?.user?.lastSpinTime,
-                    spinsAvailable: res?.user?.spinsAvailable,
-                    bonusSpins: res?.user?.bonusSpins,
-                };
-            });
-            // Assume the backend handles spin recharging
-        }
-    } catch (error) {
-        console.error('Error fetching user data:', error);
-    }
-};
 
 // Create the context
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -125,6 +106,7 @@ export const useAppContext = () => {
 
 export const AppContextProvider: React.FC<{ children: ReactElement | ReactElement[] }> = ({ children }) => {
     const isMobile = useMediaQuery({ query: '(max-width: 600px)' });
+    const [isWheelSpinning, setIsWheelSpinning] = useState<boolean>(false);
     const [tgUser, setTgUser] = useState<TelegramUserData | null>(null);
     const [userId, setUserId] = useState<string | null>(null);
     const [userData, setUserData] = useState<UserData | null>(null);
@@ -165,8 +147,6 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
             console.error('Telegram WebApp is not initialized or running outside of Telegram context.');
         }
     }, []);
-
-    console.log('user', userData);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -272,22 +252,24 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
     }, []);
 
     useEffect(() => {
-        if (userData && userData?.lastSpinTime?.length > 0) {
+        if (userData && userData?.lastSpinTime?.length > 0 && !isWheelSpinning) {
             const checkSpinTimes = () => {
                 const now = new Date();
 
                 userData.lastSpinTime.forEach(async (spinTime) => {
                     if (new Date(spinTime) <= now) {
-                        if (userId) await fetchAndUpdateUserData(userId, setUserData);
+                        if (userId) await fetchUserMe(userId, setUserData);
                     }
                 });
             };
 
-            const interval = setInterval(checkSpinTimes, 1000);
+            const interval = setInterval(() => {
+                checkSpinTimes();
+            }, 3_000);
 
             return () => clearInterval(interval);
         }
-    }, [userId, userData?.lastSpinTime]);
+    }, [userId, userData?.lastSpinTime, isWheelSpinning]);
 
     if (!isMobileDevice || isTelegramWebApp) {
         return <DeviceCheckingScreen />;
@@ -297,14 +279,51 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
         return <LoaderScreen />;
     }
 
-    // Actions
     const updateTempWinScore = async (score: number, delay: number) => {
         if (userId) {
-            //@ts-ignore
-            setUserData({ ...userData, currentSector: (await fetchCurrentSector(userId))?.data });
-            await spinByUser(userId, Boolean(isFreeSpins));
-            await fetchAndUpdateUserData(userId, setUserData);
+            const newSector = await fetchCurrentSector(userId);
+
+            setUserData((prevUserData: any) => ({
+                ...prevUserData,
+                currentSector: newSector?.data,
+            }));
+
+            if (isFreeSpins) {
+                setUserData((prevUserData: any) => ({
+                    ...prevUserData,
+                    spinsAvailable: prevUserData.spinsAvailable - 1,
+                }));
+            } else {
+                setUserData((prevUserData: any) => ({
+                    ...prevUserData,
+                    bonusSpins: prevUserData.bonusSpins - 1,
+                }));
+            }
+
+            try {
+                await spinByUser(userId, Boolean(isFreeSpins));
+                await fetchUserMe(userId, setUserData);
+            } catch (error) {
+                console.error('Spin request failed', error);
+                setUserData((prevUserData: any) => ({
+                    ...prevUserData,
+                    points: prevUserData.points - score,
+                }));
+
+                if (isFreeSpins) {
+                    setUserData((prevUserData: any) => ({
+                        ...prevUserData,
+                        spinsAvailable: prevUserData.spinsAvailable + 1,
+                    }));
+                } else {
+                    setUserData((prevUserData: any) => ({
+                        ...prevUserData,
+                        bonusSpins: prevUserData.bonusSpins + 1,
+                    }));
+                }
+            }
         }
+
         setTimeout(() => {
             setUserData((prevUserData: any) => ({
                 ...prevUserData,
@@ -312,7 +331,6 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
             }));
         }, delay); // because a little delay in animation
     };
-
     const updateTonAddress = async (address: string) => {
         setUserData((prevUserData: any) => ({
             ...prevUserData,
@@ -408,6 +426,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
                 updateClaimedWhisks,
                 updateTonAddress,
                 addPointForJoiningGroup,
+                setIsWheelSpinning,
                 jettonBalance,
                 isClaimable,
                 airdropCell,
