@@ -14,16 +14,16 @@ export const loginUser = async (userId: string) => {
 export const fetchUserMe = async (userId: string, setUserData: (user: UserData) => void) => {
     try {
         //@ts-ignore
-        const { user } = await userApi.userMe(userId);
+        const { user } = (await userApi.userMe(userId)).data;
 
         if (user) {
             //@ts-ignore
             setUserData((prev: UserData): UserData => {
                 return {
                     ...prev,
-                    lastSpinTime: user?.lastSpinTime,
-                    spinsAvailable: user?.spinsAvailable,
-                    bonusSpins: user?.bonusSpins,
+                    lastSpinTime: user.lastSpinTime,
+                    spinsAvailable: user.spinsAvailable,
+                    bonusSpins: user.bonusSpins,
                 };
             });
         }

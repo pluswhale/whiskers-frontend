@@ -251,6 +251,8 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
         fetchAirdrop();
     }, []);
 
+    console.log('setIsWheelSpinning', isWheelSpinning);
+
     useEffect(() => {
         if (userData && userData?.lastSpinTime?.length > 0 && !isWheelSpinning) {
             const checkSpinTimes = () => {
