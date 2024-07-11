@@ -1,4 +1,4 @@
-import { FC, ReactElement } from 'react';
+import { FC, ReactElement, useEffect, useState } from 'react';
 import { Typography } from '../../shared/components/typography';
 import styles from './levels-template.module.scss';
 import { useNavigate } from 'react-router-dom';
@@ -11,10 +11,13 @@ import backIcon from '../../assets/images/back-arrow.png';
 import { REF_TEXT, WHISK_BOT_NAME } from '../invitation/invitation';
 import { Icon } from '../../shared/components/icon';
 import { getCountOfNeededReferral } from './functions';
+import { loginUser } from '../../shared/api/user/thunks';
 
 export const LevelsTemplate: FC = (): ReactElement => {
     const navigate = useNavigate();
     const { userData, isMobile } = useAppContext();
+    const [level, setLevel] = useState(1);
+    const [referrals, setReferrals] = useState(0);
 
     const onNavigateToMainScreen = () => {
         navigate(-1);
@@ -24,6 +27,16 @@ export const LevelsTemplate: FC = (): ReactElement => {
         const refLink = `https://t.me/share/url?text=%0A${REF_TEXT}&url=https://t.me/${WHISK_BOT_NAME}?startapp=${userData?.userId}`;
         window.location.href = refLink;
     };
+
+    useEffect(() => {
+        const fetchLevels = async () => {
+            const { user } = await loginUser(userData?.userId || '');
+            setLevel(user.level);
+            setReferrals(user.referredUsers.length);
+        }
+
+        fetchLevels();
+    }, [])
 
     return (
         <div className={styles.levels__wrapper}>
@@ -41,21 +54,21 @@ export const LevelsTemplate: FC = (): ReactElement => {
                         Current level
                     </Typography>
                     <Typography fontSize={'30px'} fontWeight={'bold'} fontFamily="Montserrat, sans-serif">
-                        {userData?.level || '1'}
+                        {level || '1'}
                     </Typography>
                     <Typography fontSize={'16px'} align={'center'} fontFamily="Montserrat, sans-serif">
-                        {userData?.level === 3 ? (
+                        {level === 3 ? (
                             'You have maximum level for now!'
                         ) : (
                             <>
-                                You have a total of {userData?.referredUsers?.length || 0} referrals.
+                                You have a total of {referrals || 0} referrals.
                                 <br />
                                 Invite{' '}
                                 {getCountOfNeededReferral(
-                                    userData?.referredUsers?.length || 0,
-                                    userData?.level || 1,
+                                    referrals || 0,
+                                    level || 1,
                                 )}{' '}
-                                or more friends to reach level {userData?.level && userData?.level + 1}.
+                                or more friends to reach level {level && level + 1}.
                             </>
                         )}
                     </Typography>

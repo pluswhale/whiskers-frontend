@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../app/providers/AppContext';
-import { FC, ReactElement } from 'react';
+import { FC, ReactElement, useEffect, useState } from 'react';
 import styles from './tasks-template.module.scss';
 import { Logo } from '../../shared/components/logo';
 import { Heading } from '../../shared/components/heading';
@@ -12,10 +12,12 @@ import { REF_TEXT, WHISK_BOT_NAME } from '../invitation/invitation';
 import inviteIcon from '../../assets/images/invite.png';
 import megaphoneIcon from '../../assets/images/megaphone.png';
 import telegramIcon from '../../assets/images/telegram.png';
+import { loginUser } from '../../shared/api/user/thunks';
 
 export const TasksTemplate: FC = (): ReactElement => {
     const navigate = useNavigate();
     const { userData, isMobile, addPointForJoiningGroup } = useAppContext();
+    const [tasks, setTasks] = useState<any[]>([]);
 
     const onNavigateToMainScreen = () => {
         navigate(-1);
@@ -40,6 +42,16 @@ export const TasksTemplate: FC = (): ReactElement => {
         }, 120000); // 120000 ms = 2 minutes
     };
 
+    useEffect(() => {
+        const fetchUserTasks = async () => {
+            const { user } = await loginUser(userData?.userId || '');
+            setTasks(user.tasks);
+            console.log(tasks)
+        }
+
+        fetchUserTasks();
+    }, [])
+
     return (
         <div className={styles.tasks__wrapper}>
             <div className={styles.tasks__container}>
@@ -57,8 +69,8 @@ export const TasksTemplate: FC = (): ReactElement => {
                     </Typography>
                 </div>
                 <div className={styles.tasks__tasks_rows}>
-                    {userData?.tasks &&
-                        userData?.tasks
+                    {tasks &&
+                        tasks
                             .filter((task) => !task.isCompleted)
                             .map(({ name, description, reward }, index, users) => (
                                 <ActionButton
