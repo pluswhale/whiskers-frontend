@@ -251,8 +251,6 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
         fetchAirdrop();
     }, []);
 
-    console.log('setIsWheelSpinning', isWheelSpinning);
-
     useEffect(() => {
         if (userData && userData?.lastSpinTime?.length > 0 && !isWheelSpinning) {
             const checkSpinTimes = () => {
@@ -283,13 +281,6 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
 
     const updateTempWinScore = async (score: number, delay: number) => {
         if (userId) {
-            const newSector = await fetchCurrentSector(userId);
-
-            setUserData((prevUserData: any) => ({
-                ...prevUserData,
-                currentSector: newSector?.data,
-            }));
-
             if (isFreeSpins) {
                 setUserData((prevUserData: any) => ({
                     ...prevUserData,
@@ -304,6 +295,14 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
 
             try {
                 await spinByUser(userId, Boolean(isFreeSpins));
+
+                const newSector = await fetchCurrentSector(userId);
+
+                setUserData((prevUserData: any) => ({
+                    ...prevUserData,
+                    currentSector: newSector?.data,
+                }));
+
                 await fetchUserMe(userId, setUserData);
             } catch (error) {
                 console.error('Spin request failed', error);
