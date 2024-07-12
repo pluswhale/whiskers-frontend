@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../app/providers/AppContext';
-import { FC, ReactElement, useEffect, useState } from 'react';
+import { FC, ReactElement, useEffect, useMemo, useState } from 'react';
 import styles from './tasks-template.module.scss';
 import { Logo } from '../../shared/components/logo';
 import { Heading } from '../../shared/components/heading';
@@ -18,7 +18,7 @@ export const TasksTemplate: FC = (): ReactElement => {
     const navigate = useNavigate();
     const { userData, isMobile, addPointForJoiningGroup } = useAppContext();
     const [tasks, setTasks] = useState<any[]>([]);
-
+    const memoizedTasks = useMemo(() => tasks.filter((task) => !task.isCompleted), [tasks])
     const onNavigateToMainScreen = () => {
         navigate(-1);
     };
@@ -68,9 +68,8 @@ export const TasksTemplate: FC = (): ReactElement => {
                     </Typography>
                 </div>
                 <div className={styles.tasks__tasks_rows}>
-                    {tasks &&
-                        tasks
-                            .filter((task) => !task.isCompleted)
+                    {memoizedTasks.length > 0 ?
+                        memoizedTasks
                             .map(({ name, description, reward }, index, users) => (
                                 <ActionButton
                                     key={index}
@@ -121,7 +120,7 @@ export const TasksTemplate: FC = (): ReactElement => {
                                     }}
                                     backgroundImage={'linear-gradient(to bottom, #383a51 20%, #252739)'}
                                 />
-                            ))}
+                            )) : <Typography align='center'>You have completed all tasks! Stay tuned for updates</Typography>}
                 </div>
                 <div className={styles.tasks__balance}>
                     <div onClick={onNavigateToMainScreen} className={styles.tasks__back}>
