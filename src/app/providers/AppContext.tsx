@@ -253,34 +253,45 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
     }, []);
 
     useEffect(() => {
-        if (userData && userData?.lastSpinTime?.length > 0 && !isWheelSpinning) {
-            const checkSpinTimes = async () => {
-                const now = new Date();
-
-                for (const spinTime of userData.lastSpinTime) {
-                    if (new Date(spinTime) <= now) {
-                        if (userId) await fetchUserMe(userId, setUserData);
-                    }
-                }
-            };
-
-            // Clear the existing interval if there is one
+        const cleanup = () => {
             if (intervalRef.current) {
                 clearInterval(intervalRef.current);
+                intervalRef.current = null;
             }
+        };
 
-            // Set a new interval and store its ID in the ref
-            intervalRef.current = setInterval(checkSpinTimes, 3_000);
+        async function pollFreeSpin() {
+            if (userData && userData?.lastSpinTime?.length > 0 && !isWheelSpinning) {
+                const checkSpinTimes = async () => {
+                    const now = new Date();
 
-            // Cleanup function to clear the interval when the component unmounts or dependencies change
-            return () => {
-                if (intervalRef.current) {
-                    clearInterval(intervalRef.current);
-                    intervalRef.current = null;
-                }
-            };
+                    for (const spinTime of userData.lastSpinTime) {
+                        if (new Date(spinTime) <= now) {
+                            if (userId) await fetchUserMe(userId, setUserData);
+                        }
+                    }
+                };
+
+                // Clear the existing interval if there is one
+                cleanup();
+
+                // Set a new interval and store its ID in the ref
+                intervalRef.current = setInterval(checkSpinTimes, 3_000);
+            } else if (userId && userData?.lastSpinTime?.length === 0) {
+                const newSector = await fetchCurrentSector(userId);
+
+                //@ts-ignore
+                setUserData((prevUserData) => ({
+                    ...prevUserData,
+                    currentSector: newSector?.data,
+                }));
+            }
         }
-    }, [userId, userData?.lastSpinTime, isWheelSpinning, fetchUserMe, setUserData]);
+
+        pollFreeSpin();
+
+        return cleanup;
+    }, [userId, userData?.lastSpinTime, isWheelSpinning, fetchUserMe, setUserData, fetchCurrentSector]);
 
     if (!isMobileDevice || isTelegramWebApp) {
         return <DeviceCheckingScreen />;
