@@ -12,7 +12,7 @@ import { REF_TEXT, WHISK_BOT_NAME } from '../invitation/invitation';
 import inviteIcon from '../../assets/images/invite.png';
 import megaphoneIcon from '../../assets/images/megaphone.png';
 import telegramIcon from '../../assets/images/telegram.png';
-import { loginUser } from '../../shared/api/user/thunks';
+import { fetchTasks } from '../../shared/api/user/thunks';
 
 export const TasksTemplate: FC = (): ReactElement => {
     const navigate = useNavigate();
@@ -44,9 +44,8 @@ export const TasksTemplate: FC = (): ReactElement => {
 
     useEffect(() => {
         const fetchUserTasks = async () => {
-            const { user } = await loginUser(userData?.userId || '');
-            setTasks(user.tasks);
-            console.log(tasks)
+            const tasks = await fetchTasks(userData?.userId || '');
+            setTasks(tasks);
         }
 
         fetchUserTasks();
