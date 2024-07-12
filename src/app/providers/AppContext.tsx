@@ -280,11 +280,13 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
             } else if (userId && userData?.lastSpinTime?.length === 0) {
                 const newSector = await fetchCurrentSector(userId);
 
-                //@ts-ignore
-                setUserData((prevUserData) => ({
-                    ...prevUserData,
-                    currentSector: newSector?.data,
-                }));
+                if (newSector?.data) {
+                    //@ts-ignore
+                    setUserData((prevUserData) => ({
+                        ...prevUserData,
+                        currentSector: newSector?.data,
+                    }));
+                }
             }
         }
 
@@ -320,10 +322,12 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
 
                 const newSector = await fetchCurrentSector(userId);
 
-                setUserData((prevUserData: any) => ({
-                    ...prevUserData,
-                    currentSector: newSector?.data,
-                }));
+                if (newSector?.data) {
+                    setUserData((prevUserData: any) => ({
+                        ...prevUserData,
+                        currentSector: newSector?.data,
+                    }));
+                }
 
                 await fetchUserMe(userId, setUserData);
             } catch (error) {

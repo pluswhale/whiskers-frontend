@@ -220,6 +220,9 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
     const twistWheel = async (duration: number, delay: number) => {
         const { prizeValue, sector: randomSectorValue } = userData?.currentSector || {};
 
+        console.log('prizeValue', prizeValue);
+        console.log('randomSectorValue', randomSectorValue);
+
         updateTempWinScore(prizeValue, delay);
         setWinAnimation(prizeValue);
 
