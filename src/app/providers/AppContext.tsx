@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { createContext, ReactElement, useContext, useEffect, useState } from 'react';
+import React, { createContext, ReactElement, useContext, useEffect, useRef, useState } from 'react';
 import LoaderScreen from '../../features/loader-screen/LoaderScreen';
 import {
     loginUser,
@@ -24,7 +24,7 @@ import { getHttpEndpoint } from '@orbs-network/ton-access';
 import { NETWORK, JETTON_MINTER_ADDRESS } from '../../contracts/config';
 
 //@ts-ignore
-const testUserId = '574813379';
+const testUserId = '459509065';
 
 //@ts-ignore
 const tg: any = window?.Telegram?.WebApp;
@@ -124,6 +124,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
     const md = new MobileDetect(userAgent);
     const isMobileDevice = md.mobile() !== null || md.tablet() !== null;
     const isTelegramWebApp = userAgent.includes('Telegram');
+    const intervalRef = useRef<any>(null);
 
     useEffect(() => {
         return () => {
@@ -253,23 +254,33 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
 
     useEffect(() => {
         if (userData && userData?.lastSpinTime?.length > 0 && !isWheelSpinning) {
-            const checkSpinTimes = () => {
+            const checkSpinTimes = async () => {
                 const now = new Date();
 
-                userData.lastSpinTime.forEach(async (spinTime) => {
+                for (const spinTime of userData.lastSpinTime) {
                     if (new Date(spinTime) <= now) {
                         if (userId) await fetchUserMe(userId, setUserData);
                     }
-                });
+                }
             };
 
-            const interval = setInterval(() => {
-                checkSpinTimes();
-            }, 3_000);
+            // Clear the existing interval if there is one
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+            }
 
-            return () => clearInterval(interval);
+            // Set a new interval and store its ID in the ref
+            intervalRef.current = setInterval(checkSpinTimes, 3_000);
+
+            // Cleanup function to clear the interval when the component unmounts or dependencies change
+            return () => {
+                if (intervalRef.current) {
+                    clearInterval(intervalRef.current);
+                    intervalRef.current = null;
+                }
+            };
         }
-    }, [userId, userData?.lastSpinTime, isWheelSpinning]);
+    }, [userId, userData?.lastSpinTime, isWheelSpinning, fetchUserMe, setUserData]);
 
     if (!isMobileDevice || isTelegramWebApp) {
         return <DeviceCheckingScreen />;
