@@ -2,15 +2,16 @@
 const SIX_HOURS = 6 * 60 * 60 * 1000;
 //@ts-ignore
 const ONE_MINS = 1 * 60 * 1000;
+//@ts-ignore
+const TEN_MINS = 10 * 60 * 1000;
 
 export function getTimeLeftFromTimestamp(timestamp: string): string {
-    console.log('timestamp', timestamp);
     if (timestamp == '') {
         return '5 hours';
     }
 
     const now = new Date();
-    const targetTime = new Date(new Date(timestamp).getTime() + ONE_MINS); // Adjusted target time
+    const targetTime = new Date(new Date(timestamp).getTime() + TEN_MINS); // Adjusted target time
 
     const timeDiff = targetTime.getTime() - now.getTime();
 
