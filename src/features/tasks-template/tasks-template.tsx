@@ -128,7 +128,7 @@ export const TasksTemplate: FC = (): ReactElement => {
                         <Typography>Back</Typography>
                     </div>
                 </div>
-                <Link className={styles.tasks__share} to="https://www.google.com">
+                <Link className={styles.tasks__share} to="https://t.me/robnguyen9">
                     {' '}
                     {/*swap to telegram channel link*/}
                     <div>
