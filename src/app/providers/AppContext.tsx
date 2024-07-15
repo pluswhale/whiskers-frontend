@@ -24,7 +24,7 @@ import { getHttpEndpoint } from '@orbs-network/ton-access';
 import { NETWORK, JETTON_MINTER_ADDRESS } from '../../contracts/config';
 
 //@ts-ignore
-const testUserId = '459509065';
+const testUserId = '574813379';
 
 //@ts-ignore
 const tg: any = window?.Telegram?.WebApp;
