@@ -65,7 +65,7 @@ export const ActionButton: FC<Props> = (props): ReactElement => {
                   ? 'none'
                   : backgroundImage
                     ? backgroundImage
-                    : 'linear-gradient(135deg, #13152b, #252637)',
+                    : 'linear-gradient(330deg, #252739 30%, #14162b)',
           }}
           className={styles.button}
       >

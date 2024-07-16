@@ -14,11 +14,11 @@ export const Routing: FC = (): ReactElement => {
         <Suspense fallback={<LoaderScreen />}>
             <BrowserRouter>
                 <Routes>
-                    <Route path='/' element={<AppLayout />}>
-                        <Route path="/whiskers-frontend" element={<MainPage />} />
-                        <Route path="/whiskers-frontend/buy" element={<BuyPage />} />
-                        <Route path="/whiskers-frontend/levels" element={<LevelsPage />} />
-                        <Route path="/whiskers-frontend/tasks" element={<TasksPage />} />
+                    <Route path="/" element={<AppLayout />}>
+                        <Route path="/dev" element={<MainPage />} />
+                        <Route path="/dev/buy" element={<BuyPage />} />
+                        <Route path="/dev/levels" element={<LevelsPage />} />
+                        <Route path="/dev/tasks" element={<TasksPage />} />
                     </Route>
                     <Route path="*" element={<div>Not found</div>} />
                 </Routes>

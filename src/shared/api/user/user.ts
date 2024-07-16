@@ -13,7 +13,10 @@ export const userApi = {
     verifyTelegramMembership: (userId: string) => Instance.post(`verify-telegram-membership/`, { userId }),
     buySpins: (userId: string, body: BuySpinsBody) => Instance.post(`buy/${userId}`, body),
     loginUser: (userId: string) => Instance.post(`login/${userId}`),
+    userMe: (userId: string) => Instance.get(`me/${userId}`),
     referral: (refferedUserId: string, body: ReferralBody) => Instance.post(`referral/${refferedUserId}`, body),
     getTasks: (userId: string) => Instance.get(`tasks/${userId}`),
+    fetchCurrentSector: (userId: string) => Instance.post(`set-current-sector/${userId}`),
+    spinByUser: (userId: string, isFreeSpin: boolean) => Instance.post(`spin-by-user/${userId}`, { isFreeSpin }),
 };
 

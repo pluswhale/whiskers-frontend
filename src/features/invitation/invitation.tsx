@@ -21,11 +21,11 @@ export const Invitation: FC<Props> = ({ isMobile, userData }): ReactElement => {
     };
 
     const onNavigateToLevels = () => {
-        navigate('/whiskers-frontend/levels');
+        navigate('/dev/levels');
     };
 
     const onNavigateToTasks = () => {
-        navigate('/whiskers-frontend/tasks');
+        navigate('/dev/tasks');
     };
 
     return (
@@ -50,7 +50,7 @@ export const Invitation: FC<Props> = ({ isMobile, userData }): ReactElement => {
                 height={isMobile ? '65px' : '200px'}
                 textTransform={'none'}
                 text={'Level'}
-                subText={String(userData?.level) || '1'}
+                subText={String(userData?.level)}
                 fontWeight={'bolder'}
                 borderRadius={'12px'}
                 stylesForTexts={{

@@ -20,7 +20,6 @@ import { useAudio } from '../../app/providers/AudioProvider';
 import muteMusicImage from '../../assets/images/no-sound.png';
 import enableMusicImage from '../../assets/images/medium-volume.png';
 import fastForwardButton from '../../assets/images/fast-forward-button.png';
-import { getRandomSector } from '../../shared/api/user/thunks';
 
 interface WheelMobileProps {
     isAvailableToSpin: boolean;
@@ -37,7 +36,7 @@ const WinAnimations: { [key in WinAnimation]: any } = {
 };
 
 export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLoggedIn }): ReactElement => {
-    const { userData, isFreeSpins, updateFreeSpins, updateBonusSpins, updateTempWinScore } = useAppContext();
+    const { userData, updateTempWinScore, setIsWheelSpinning } = useAppContext();
     const { startAudio, stopAudio, isPlaying } = useAudio();
     const [isDisplayAnimation, setIsDisplayAnimation] = useState<boolean>(false);
     const [isFastSpinning, setIsFastSpinning] = useState<boolean>(false);
@@ -130,17 +129,13 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
         drawWheel(beginTwistAngleRef.current, sectorsData);
     }
 
-    const handleSpinButtonClick = () => {
-        if (isUserLoggedIn) {
+    const handleSpinButtonClick = async () => {
+        if (isUserLoggedIn && userData?.userId) {
             if (isNeedRotateSpinIcon || !isAvailableToSpin || isFastSpinning) return;
 
             if (isDisplayAnimation) setIsDisplayAnimation(false);
 
-            if (!isFreeSpins) {
-                updateBonusSpins();
-            } else {
-                updateFreeSpins();
-            }
+            setIsWheelSpinning(true);
 
             twistWheel(5000, WHEEL_SPINNING_SECONDS + 1000);
 
@@ -156,16 +151,15 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
                 setIsDisplayAnimation(true);
             }, WHEEL_SPINNING_SECONDS);
 
-            setTimeout(() => {
+            setTimeout(async () => {
                 setIsNeedRotateSpinIcon(false);
+                setIsWheelSpinning(false);
                 setIsDisplayAnimation(false);
                 if (audioRef.current) {
                     audioRef.current.currentTime = 0;
                     audioRef.current.pause();
                 }
             }, 7000);
-
-            setTimeout(() => {}, 7_000);
         } else {
             toast.error(`Cannot spin it`, {
                 position: 'bottom-left',
@@ -181,17 +175,13 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
         }
     };
 
-    const handleFastSpinButtonClick = () => {
-        if (isUserLoggedIn) {
+    const handleFastSpinButtonClick = async () => {
+        if (isUserLoggedIn && userData?.userId) {
             if (isNeedRotateSpinIcon || !isAvailableToSpin || isFastSpinning) return; //
 
             setIsFastSpinning(true);
 
-            if (!isFreeSpins) {
-                updateBonusSpins();
-            } else {
-                updateFreeSpins();
-            }
+            setIsWheelSpinning(true);
 
             twistWheel(500, 500);
 
@@ -207,7 +197,11 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
                     quickWinSoundRef.current.pause();
                     quickWinSoundRef.current.currentTime = 0;
                 }
-            }, 2000);
+            }, 3_500);
+
+            setTimeout(() => {
+                setIsWheelSpinning(false);
+            }, 5000);
         } else {
             toast.error(`Cannot spin it`, {
                 position: 'bottom-left',
@@ -224,9 +218,10 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
     };
 
     const twistWheel = async (duration: number, delay: number) => {
-        const { sector: randomSectorValue, prizeValue } = (
-            await getRandomSector(userData?.userId || '', Boolean(isFreeSpins))
-        ).data;
+        const { prizeValue, sector: randomSectorValue } = userData?.currentSector || {};
+
+        console.log('prizeValue', prizeValue);
+        console.log('randomSectorValue', randomSectorValue);
 
         updateTempWinScore(prizeValue, delay);
         setWinAnimation(prizeValue);
@@ -246,22 +241,6 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
             timing: timing,
         });
     };
-
-    //get random sector according to sectors probabilities
-    // function randomSector(delay: number) {
-    //     const randomNumber = Math.floor(Math.random() * 360) + 1; // 1...360
-
-    //     for (let i = 0, upperBorder = 0; i < sectorsData?.length; i++) {
-    //         upperBorder += sectorsData?.[i]?.probability as number;
-    //         console.log('ub', upperBorder);
-
-    //         if (randomNumber < upperBorder) {
-    //             setWinAnimation(sectorsData?.[i]?.value as WinAnimation);
-    //             updateTempWinScore(sectorsData?.[i]?.value, delay); // add score setter and make request here
-    //             return i;
-    //         }
-    //     }
-    // }
 
     function animate({ timing, duration }: { timing: (fraction: number) => number; duration: number }) {
         const start = performance.now();
@@ -502,7 +481,7 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
             <div className={styles.app__fast_forward}>
                 <img
                     onClick={handleFastSpinButtonClick}
-                    className={`${styles.app__fast_forward__icon} ${isFastSpinning ? styles.app__fast_forward__icon_active : ''}  ${!isAvailableToSpin || isNeedRotateSpinIcon ? styles.app__fast_forward__icon_non_active : ''}`}
+                    className={`${styles.app__fast_forward__icon} ${isFastSpinning ? styles.app__fast_forward__icon_active : ''}  ${!isAvailableToSpin || isFastSpinning ? styles.app__fast_forward__icon_non_active : ''}`}
                     src={fastForwardButton}
                 />
             </div>

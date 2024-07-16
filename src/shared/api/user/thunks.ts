@@ -1,3 +1,4 @@
+import { UserData } from '../../../app/providers/AppContext';
 import { BuySpinsBody, ReferralBody, SpinWheelBody } from './types';
 import { userApi } from './user';
 
@@ -5,6 +6,45 @@ export const loginUser = async (userId: string) => {
     try {
         const res = await userApi.loginUser(userId);
         return res.data;
+    } catch (err) {
+        console.error(err);
+    }
+};
+
+export const fetchUserMe = async (userId: string, setUserData: (user: UserData) => void) => {
+    try {
+        //@ts-ignore
+        const { user } = (await userApi.userMe(userId)).data;
+
+        if (user) {
+            //@ts-ignore
+            setUserData((prev: UserData): UserData => {
+                return {
+                    ...prev,
+                    lastSpinTime: user.lastSpinTime,
+                    spinsAvailable: user.spinsAvailable,
+                    bonusSpins: user.bonusSpins,
+                };
+            });
+        }
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+    }
+};
+
+export const fetchCurrentSector = async (userId: string) => {
+    try {
+        const res = await userApi.fetchCurrentSector(userId);
+        return res.data;
+    } catch (err) {
+        console.error(err);
+    }
+};
+
+export const spinByUser = async (userId: string, isFreeSpin: boolean) => {
+    try {
+        const res = await userApi.spinByUser(userId, isFreeSpin);
+        return res.data.message;
     } catch (err) {
         console.error(err);
     }
@@ -113,9 +153,10 @@ export const fetchAirdropList = async () => {
 export const fetchTasks = async (userId: string) => {
     try {
         const res = await userApi.getTasks(userId);
-        console.log(res)
+        console.log(res);
         return res.data;
     } catch (err) {
-        console.error(err)
+        console.error(err);
     }
-}
+};
+

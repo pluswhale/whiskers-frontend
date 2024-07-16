@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { createContext, ReactElement, useContext, useEffect, useState } from 'react';
+import React, { createContext, ReactElement, useContext, useEffect, useRef, useState } from 'react';
 import LoaderScreen from '../../features/loader-screen/LoaderScreen';
 import {
     loginUser,
@@ -8,6 +8,9 @@ import {
     fetchSnapshotInfo,
     fetchAirdropList,
     verifyTelegramMembershipByUser,
+    fetchCurrentSector,
+    spinByUser,
+    fetchUserMe,
 } from '../../shared/api/user/thunks';
 import { useMediaQuery } from 'react-responsive';
 import { removeAllCookies } from '../../shared/libs/cookies';
@@ -21,7 +24,7 @@ import { getHttpEndpoint } from '@orbs-network/ton-access';
 import { NETWORK, JETTON_MINTER_ADDRESS } from '../../contracts/config';
 
 //@ts-ignore
-const testUserId = '459509065';
+const testUserId = '574813379';
 
 //@ts-ignore
 const tg: any = window?.Telegram?.WebApp;
@@ -41,6 +44,10 @@ export interface UserData {
     updatedAt: string;
     lastSpinTime: string[];
     userId: string;
+    currentSector: {
+        prizeValue: any;
+        sector: number;
+    };
     __v: number;
     _id: string;
 }
@@ -66,6 +73,7 @@ export interface TelegramUserData {
 
 interface AppContextType {
     userData: UserData | null;
+    setUserData: any;
     isFreeSpins: boolean | null;
     isMobile: boolean;
     isAvailableToSpin: boolean;
@@ -75,28 +83,14 @@ interface AppContextType {
     updateTempWinScore: (score: number, delay: number) => void;
     updateClaimedWhisks: () => void;
     updateTonAddress: (address: string) => void;
+    addPointForJoiningGroup: (userTasks: UserTask[], userId: string, clearInterval?: any) => void;
+    setIsWheelSpinning: (arg: boolean) => void;
     jettonBalance: number;
     isClaimable: number | null;
     airdropCell: string | null;
     campaignNumber: number | null;
     airdropList: any[];
 }
-
-const fetchAndUpdateUserData = async (userId: string, setUserData: (user: UserData) => void) => {
-    try {
-        const res = await loginUser(userId); // Adjust the endpoint and method as needed
-
-        if (res) {
-            //@ts-ignore
-            setUserData((prev: UserData): UserData => {
-                return { ...prev, lastSpinTime: res?.user?.lastSpinTime, spinsAvailable: res?.user?.spinsAvailable };
-            });
-            // Assume the backend handles spin recharging
-        }
-    } catch (error) {
-        console.error('Error fetching user data:', error);
-    }
-};
 
 // Create the context
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -112,6 +106,7 @@ export const useAppContext = () => {
 
 export const AppContextProvider: React.FC<{ children: ReactElement | ReactElement[] }> = ({ children }) => {
     const isMobile = useMediaQuery({ query: '(max-width: 600px)' });
+    const [isWheelSpinning, setIsWheelSpinning] = useState<boolean>(false);
     const [tgUser, setTgUser] = useState<TelegramUserData | null>(null);
     const [userId, setUserId] = useState<string | null>(null);
     const [userData, setUserData] = useState<UserData | null>(null);
@@ -129,6 +124,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
     const md = new MobileDetect(userAgent);
     const isMobileDevice = md.mobile() !== null || md.tablet() !== null;
     const isTelegramWebApp = userAgent.includes('Telegram');
+    const intervalRef = useRef<any>(null);
 
     useEffect(() => {
         return () => {
@@ -155,28 +151,21 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
 
     useEffect(() => {
         const fetchUserData = async () => {
-            // const userId = tgUser?.id?.toString();
-
             if (!userId) return;
 
             try {
-                const res = await loginUser(userId);
-
-                if (res && res?.user) {
-                    setUserData(res.user);
-
-                    const isUserJoinedToTelegramGroup = res.user?.tasks ? res.user.tasks?.[2]?.isCompleted : false;
-
-                    if (!isUserJoinedToTelegramGroup) {
-                        const res = await verifyTelegramMembershipByUser(userId);
-                        if (res && res.status === 200) {
-                            setUserData((prev: any) => ({ ...prev, points: prev?.points + 500 }));
-                        }
+                const { user } = await loginUser(userId);
+                if (user) {
+                    if (user.currentSector.prizeValue === 0) {
+                        user.currentSector = (await fetchCurrentSector(userId))?.data;
                     }
+                    setUserData(user);
+
+                    await addPointForJoiningGroup(user.tasks, userId); // -- add 500 points if user join to group
 
                     if (uriParams?.tgWebAppStartParam) {
-                        await referralUser(res.user.userId, {
-                            referredById: uriParams.tgWebAppStartParam.split('#')[0],
+                        await referralUser(user.userId, {
+                            referredById: uriParams.tgWebAppStartParam?.split('#')?.[0],
                         });
                     }
                 }
@@ -264,23 +253,47 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
     }, []);
 
     useEffect(() => {
-        if (userData && userData?.lastSpinTime?.length > 0) {
-            const checkSpinTimes = () => {
-                const now = new Date();
+        const cleanup = () => {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+                intervalRef.current = null;
+            }
+        };
 
-                userData.lastSpinTime.forEach(async (spinTime) => {
-                    if (new Date(spinTime) <= now) {
-                        // const userId = tgUser?.id?.toString();
-                        if (userId) await fetchAndUpdateUserData(userId, setUserData);
+        async function pollFreeSpin() {
+            if (userData && userData?.lastSpinTime?.length > 0 && !isWheelSpinning) {
+                const checkSpinTimes = async () => {
+                    const now = new Date();
+
+                    for (const spinTime of userData.lastSpinTime) {
+                        if (new Date(spinTime) <= now) {
+                            if (userId) await fetchUserMe(userId, setUserData);
+                        }
                     }
-                });
-            };
+                };
 
-            const interval = setInterval(checkSpinTimes, 1000);
+                // Clear the existing interval if there is one
+                cleanup();
 
-            return () => clearInterval(interval);
+                // Set a new interval and store its ID in the ref
+                intervalRef.current = setInterval(checkSpinTimes, 3_000);
+            } else if (userId && userData?.lastSpinTime?.length === 0) {
+                const newSector = await fetchCurrentSector(userId);
+
+                if (newSector?.data) {
+                    //@ts-ignore
+                    setUserData((prevUserData) => ({
+                        ...prevUserData,
+                        currentSector: newSector?.data,
+                    }));
+                }
+            }
         }
-    }, [userId, userData?.lastSpinTime]);
+
+        pollFreeSpin();
+
+        return cleanup;
+    }, [userId, userData?.lastSpinTime, isWheelSpinning, fetchUserMe, setUserData, fetchCurrentSector]);
 
     if (!isMobileDevice || isTelegramWebApp) {
         return <DeviceCheckingScreen />;
@@ -290,13 +303,54 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
         return <LoaderScreen />;
     }
 
-    // Actions
     const updateTempWinScore = async (score: number, delay: number) => {
-        // const userId = tgUser?.id?.toString();
-
         if (userId) {
-            await fetchAndUpdateUserData(userId, setUserData);
+            if (isFreeSpins) {
+                setUserData((prevUserData: any) => ({
+                    ...prevUserData,
+                    spinsAvailable: prevUserData.spinsAvailable - 1,
+                }));
+            } else {
+                setUserData((prevUserData: any) => ({
+                    ...prevUserData,
+                    bonusSpins: prevUserData.bonusSpins - 1,
+                }));
+            }
+
+            try {
+                await spinByUser(userId, Boolean(isFreeSpins));
+
+                const newSector = await fetchCurrentSector(userId);
+
+                if (newSector?.data) {
+                    setUserData((prevUserData: any) => ({
+                        ...prevUserData,
+                        currentSector: newSector?.data,
+                    }));
+                }
+
+                await fetchUserMe(userId, setUserData);
+            } catch (error) {
+                console.error('Spin request failed', error);
+                setUserData((prevUserData: any) => ({
+                    ...prevUserData,
+                    points: prevUserData.points - score,
+                }));
+
+                if (isFreeSpins) {
+                    setUserData((prevUserData: any) => ({
+                        ...prevUserData,
+                        spinsAvailable: prevUserData.spinsAvailable + 1,
+                    }));
+                } else {
+                    setUserData((prevUserData: any) => ({
+                        ...prevUserData,
+                        bonusSpins: prevUserData.bonusSpins + 1,
+                    }));
+                }
+            }
         }
+
         setTimeout(() => {
             setUserData((prevUserData: any) => ({
                 ...prevUserData,
@@ -304,7 +358,6 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
             }));
         }, delay); // because a little delay in animation
     };
-
     const updateTonAddress = async (address: string) => {
         setUserData((prevUserData: any) => ({
             ...prevUserData,
@@ -358,6 +411,28 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
         fetchUserData();
     };
 
+    async function addPointForJoiningGroup(userTasks: UserTask[], userId: string, clearInterval?: any) {
+        const isUserJoinedToTelegramGroup = userTasks?.[2]?.isCompleted;
+
+        if (!isUserJoinedToTelegramGroup) {
+            const res = await verifyTelegramMembershipByUser(userId);
+
+            if (res && res.status === 200) {
+                const updatedTasks = userTasks?.map((task) => {
+                    if (task.name === 'Join Telegram group') {
+                        return { ...task, isCompleted: true };
+                    } else {
+                        return task;
+                    }
+                });
+
+                setUserData((prev: any) => ({ ...prev, points: prev?.points + 500, tasks: updatedTasks }));
+
+                if (clearInterval) clearInterval();
+            }
+        }
+    }
+
     function onExitFromApp() {
         removeAllCookies();
         tg.close();
@@ -368,6 +443,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
             value={{
                 tgUser,
                 userData,
+                setUserData,
                 isFreeSpins,
                 isAvailableToSpin,
                 isMobile,
@@ -376,6 +452,8 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
                 updateBonusSpins,
                 updateClaimedWhisks,
                 updateTonAddress,
+                addPointForJoiningGroup,
+                setIsWheelSpinning,
                 jettonBalance,
                 isClaimable,
                 airdropCell,
