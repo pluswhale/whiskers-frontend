@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "test": "cypress run --headless --browser chrome",
     "gh-deploy": "gh-pages -d dist",
-    "deploy": "npm run test && npm run gh-deploy",
+    "deploy": "npm run test && npm run build && npm run gh-deploy",
     "cy:open": "cypress open"
   },
   "dependencies": {
