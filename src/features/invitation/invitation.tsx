@@ -21,11 +21,11 @@ export const Invitation: FC<Props> = ({ isMobile, userData }): ReactElement => {
     };
 
     const onNavigateToLevels = () => {
-        navigate('/whiskers-frontend/levels');
+        navigate('/dev/levels');
     };
 
     const onNavigateToTasks = () => {
-        navigate('/whiskers-frontend/tasks');
+        navigate('/dev/tasks');
     };
 
     return (
