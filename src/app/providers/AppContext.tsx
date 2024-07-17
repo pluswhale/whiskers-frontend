@@ -295,7 +295,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
         return cleanup;
     }, [userId, userData?.lastSpinTime, isWheelSpinning, fetchUserMe, setUserData, fetchCurrentSector]);
 
-    if (!isMobileDevice || isTelegramWebApp) {
+    if (!isMobile || !isMobileDevice || isTelegramWebApp) {
         return <DeviceCheckingScreen />;
     }
 

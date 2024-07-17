@@ -153,7 +153,6 @@ export const fetchAirdropList = async () => {
 export const fetchTasks = async (userId: string) => {
     try {
         const res = await userApi.getTasks(userId);
-        console.log(res);
         return res.data;
     } catch (err) {
         console.error(err);

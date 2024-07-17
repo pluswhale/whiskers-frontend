@@ -11,4 +11,8 @@ export default defineConfig({
       // implement node event listeners here
     },
   },
+  env: {
+    hostBackendUrl: 'https://whiskers-be-20342f5553a6.herokuapp.com/spin-and-earn',
+    userId: '574813379'
+  }
 });
