@@ -18,7 +18,7 @@ export const TasksTemplate: FC = (): ReactElement => {
     const navigate = useNavigate();
     const { userData, isMobile, addPointForJoiningGroup } = useAppContext();
     const [tasks, setTasks] = useState<any[]>([]);
-    const memoizedTasks = useMemo(() => tasks.filter((task) => !task.isCompleted), [tasks])
+    const memoizedTasks = useMemo(() => tasks?.filter((task) => !task.isCompleted), [tasks])
     const onNavigateToMainScreen = () => {
         navigate(-1);
     };

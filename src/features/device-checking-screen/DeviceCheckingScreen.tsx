@@ -18,7 +18,7 @@ const DeviceCheckingScreen: FC = (): ReactElement => {
                 </div>
                 <img src={deviceCheckingIcon} className={styles.device_checking_icon} alt="device checking" />
                 <Typography className={styles.sub_text} fontSize="28px" fontFamily="Montserrat, sans-serif">
-                    This game is availiable only on mobile.
+                    This game is available only on mobile.
                 </Typography>
             </div>
         </div>
