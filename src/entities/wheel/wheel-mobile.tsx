@@ -85,7 +85,7 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
     const dpiTextFontSize = textFontSize * increaseCoeff;
     const textStyles = {
         fillColor: '#fff',
-        textFont: `${dpiTextFontSize}px Roundy Rainbows`,
+        textFont: `${dpiTextFontSize}px 'Roundy Rainbows'`,
     };
     const turns = 4; //number of turns for one spin
     const oneSectorAngle = 1 / sectorsData.length;
@@ -420,6 +420,7 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
         const midAngle = ((startAnglePart + endAnglePart) / 2) * 2 * Math.PI;
 
         drawSector(radius, startAngle, endAngle, sectorFillColor);
+
         drawSectorText(midAngle, radiusText, text);
     }
 
@@ -444,10 +445,12 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
 
         if (ctx) {
             ctx.fillStyle = textStyles.fillColor;
-            ctx.font = textStyles.textFont;
+            ctx.font = `${textStyles.textFont}`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
         }
+
+        console.log('FONT: ', ctx?.font);
 
         ctx?.translate(centerX, centerY);
         ctx?.rotate(middleAngle);
@@ -475,7 +478,12 @@ export const WheelMobile: FC<WheelMobileProps> = ({ isAvailableToSpin, isUserLog
                 ref={canvasRef}
                 width={dpiWidth}
                 height={dpiHeight}
-                style={{ width: `${width}px`, height: `${height}px` }}
+                style={{
+                    width: `${width}px`,
+                    height: `${height}px`,
+                    fontFamily: 'Roundy Rainbows',
+                    fontStyle: 'normal',
+                }}
                 id="canvas"
             />
             <div className={styles.app__fast_forward}>
