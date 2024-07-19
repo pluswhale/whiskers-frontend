@@ -3,7 +3,7 @@ const SIX_HOURS = 6 * 60 * 60 * 1000;
 //@ts-ignore
 const ONE_MINS = 1 * 60 * 1000;
 //@ts-ignore
-const TEN_MINS = 10 * 60 * 1000;
+const TEN_MINS = 3 * 60 * 1000;
 
 export function getTimeLeftFromTimestamp(timestamp: string): string {
     if (timestamp == '') {

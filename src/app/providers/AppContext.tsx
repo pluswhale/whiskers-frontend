@@ -255,15 +255,34 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
     useEffect(() => {
         const cleanup = () => {
             if (intervalRef.current) {
-                clearInterval(intervalRef.current);
+                clearTimeout(intervalRef.current);
                 intervalRef.current = null;
             }
         };
 
         async function pollFreeSpin() {
+            let pollingInterval = 1000;
             if (userData && userData?.lastSpinTime?.length > 0 && !isWheelSpinning) {
                 const checkSpinTimes = async () => {
                     const now = new Date();
+                    console.log(userData.lastSpinTime)
+                    let timeDiff = now.getTime() - new Date(userData.lastSpinTime[0]).getTime()
+                    console.log('timediff: ', timeDiff/60/1000)
+                    console.log('now', now.getTime())
+                    if(timeDiff > 2*60*1000) {
+                        console.log('swapped to 3000')
+                        cleanup()
+                        pollingInterval = 3000
+                        intervalRef.current = setTimeout(checkSpinTimes, pollingInterval);
+                    } else {
+                        console.log('swapped to 1 min')
+                        cleanup()
+                        pollingInterval = 60*1000
+                        intervalRef.current = setTimeout(checkSpinTimes, pollingInterval);
+                    }
+                    console.log('Polling interval', pollingInterval)
+
+                    
 
                     for (const spinTime of userData.lastSpinTime) {
                         if (new Date(spinTime) <= now) {
@@ -276,7 +295,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
                 cleanup();
 
                 // Set a new interval and store its ID in the ref
-                intervalRef.current = setInterval(checkSpinTimes, 3_000);
+                intervalRef.current = setTimeout(checkSpinTimes, pollingInterval);
             } else if (userId && userData?.lastSpinTime?.length === 0) {
                 const newSector = await fetchCurrentSector(userId);
 
@@ -293,7 +312,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
         pollFreeSpin();
 
         return cleanup;
-    }, [userId, userData?.lastSpinTime, isWheelSpinning, fetchUserMe, setUserData, fetchCurrentSector]);
+    }, [isWheelSpinning, userData?.spinsAvailable]);
 
     if (!isMobile || !isMobileDevice || isTelegramWebApp) {
         return <DeviceCheckingScreen />;
