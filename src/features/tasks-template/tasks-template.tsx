@@ -68,7 +68,7 @@ export const TasksTemplate: FC = (): ReactElement => {
                     </Typography>
                 </div>
                 <div className={styles.tasks__tasks_rows}>
-                    {memoizedTasks.length > 0 ?
+                    {memoizedTasks?.length > 0 ?
                         memoizedTasks
                             .map(({ name, description, reward }, index, users) => (
                                 <ActionButton
