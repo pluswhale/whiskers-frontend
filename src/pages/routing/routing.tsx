@@ -15,10 +15,10 @@ export const Routing: FC = (): ReactElement => {
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<AppLayout />}>
-                        <Route path="/dev" element={<MainPage />} />
-                        <Route path="/dev/buy" element={<BuyPage />} />
-                        <Route path="/dev/levels" element={<LevelsPage />} />
-                        <Route path="/dev/tasks" element={<TasksPage />} />
+                        <Route path="/whiskers" element={<MainPage />} />
+                        <Route path="/whiskers/buy" element={<BuyPage />} />
+                        <Route path="/whiskers/levels" element={<LevelsPage />} />
+                        <Route path="/whiskers/tasks" element={<TasksPage />} />
                     </Route>
                     <Route path="*" element={<div>Not found</div>} />
                 </Routes>
