@@ -10,7 +10,7 @@ interface Props {
 }
 
 export const REF_TEXT = `Earn $WHISK daily for free by spinning the wheel 🤑🚀! Use my invite link and spin twice to give me 3 bonus spins 🤍👇`;
-export const WHISK_BOT_NAME = 'testWhiskers_bot/testwhisk';
+export const WHISK_BOT_NAME = 'spinearnbot/spinandearn';
 
 export const Invitation: FC<Props> = ({ isMobile, userData }): ReactElement => {
     const navigate = useNavigate();
@@ -21,11 +21,11 @@ export const Invitation: FC<Props> = ({ isMobile, userData }): ReactElement => {
     };
 
     const onNavigateToLevels = () => {
-        navigate('/dev/levels');
+        navigate('/whiskers/levels');
     };
 
     const onNavigateToTasks = () => {
-        navigate('/dev/tasks');
+        navigate('/whiskers/tasks');
     };
 
     return (

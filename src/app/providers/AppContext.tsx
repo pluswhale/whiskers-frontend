@@ -269,15 +269,15 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
                     let timeDiff = now.getTime() - new Date(userData.lastSpinTime[0]).getTime()
                     console.log('timediff: ', timeDiff/60/1000)
                     console.log('now', now.getTime())
-                    if(timeDiff > 9*60*1000) {
-                        console.log('swapped to 3000')
-                        cleanup()
-                        pollingInterval = 3000
-                        timeoutRef.current = setTimeout(checkSpinTimes, pollingInterval);
-                    } else {
+                    if(timeDiff > 5*60*60*1000) {
                         console.log('swapped to 1 min')
                         cleanup()
                         pollingInterval = 60*1000
+                        timeoutRef.current = setTimeout(checkSpinTimes, pollingInterval);
+                    } else {
+                        console.log('swapped to 1 hr')
+                        cleanup()
+                        pollingInterval = 60*60*1000
                         timeoutRef.current = setTimeout(checkSpinTimes, pollingInterval);
                     }
                     console.log('Polling interval', pollingInterval)
