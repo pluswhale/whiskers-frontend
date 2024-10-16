@@ -265,24 +265,19 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
             if (userData && userData?.lastSpinTime?.length > 0 && !isWheelSpinning) {
                 const checkSpinTimes = async () => {
                     const now = new Date();
-                    console.log(userData.lastSpinTime)
                     let timeDiff = now.getTime() - new Date(userData.lastSpinTime[0]).getTime()
-                    console.log('timediff: ', timeDiff/60/1000)
-                    console.log('now', now.getTime())
-                    if(timeDiff > 5*60*60*1000) {
-                        console.log('swapped to 1 min')
+                    if (timeDiff > 5 * 60 * 60 * 1000) {
                         cleanup()
-                        pollingInterval = 60*1000
+                        pollingInterval = 60 * 1000
                         timeoutRef.current = setTimeout(checkSpinTimes, pollingInterval);
                     } else {
-                        console.log('swapped to 1 hr')
                         cleanup()
-                        pollingInterval = 60*60*1000
+                        pollingInterval = 60 * 60 * 1000
                         timeoutRef.current = setTimeout(checkSpinTimes, pollingInterval);
                     }
                     console.log('Polling interval', pollingInterval)
 
-                    
+
 
                     for (const spinTime of userData.lastSpinTime) {
                         if (new Date(spinTime) <= now) {
@@ -314,7 +309,7 @@ export const AppContextProvider: React.FC<{ children: ReactElement | ReactElemen
         return cleanup;
     }, [isWheelSpinning, userData?.spinsAvailable]);
 
-    if (!isMobile || !isMobileDevice || isTelegramWebApp) {
+    if (!isMobile || !isMobileDevice || !isTelegramWebApp) {
         return <DeviceCheckingScreen />;
     }
 
